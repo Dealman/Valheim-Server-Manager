@@ -1,0 +1,148 @@
+﻿<mah:MetroWindow x:Name="MW" x:Class="Valheim_Server_Manager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:local="clr-namespace:Valheim_Server_Manager"
+        mc:Ignorable="d"
+        Title="Valheim Server Manager" TitleCharacterCasing="Normal" ContentRendered="MetroWindow_ContentRendered" Closing="MetroWindow_Closing" ResizeMode="CanResizeWithGrip" MinWidth="768" MinHeight="432" SizeToContent="WidthAndHeight" KeyUp="MW_KeyUp" Width="768">
+    <Window.Resources>
+        <Style x:Key="NormalColumnHeader" 
+               BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}" 
+               TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+        </Style>
+        <Style x:Key="CenteredColumnText" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+    <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+        <TabControl Margin="0,0,0,30">
+            <TabItem Header="Main">
+                <Grid x:Name="MainGrid" HorizontalAlignment="Stretch">
+                    <!-- <RichTextBox x:Name="OutputConsoleRTB" Margin="10,42,10,74" IsReadOnly="True" mah:TextBoxHelper.Watermark="Server output will be printed here once the server is started and running." Padding="2,4"/> -->
+                    <Border x:Name="FakeConsole" BorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" BorderThickness="1" Margin="10,250,10,74" Focusable="True" Visibility="Collapsed">
+                        <Grid>
+                            <ScrollViewer x:Name="Scrolleroni" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualHeight}" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualWidth}" CanContentScroll="True">
+                                <!-- <TextBlock x:Name="TextThing" Padding="2,2,0,0" TextWrapping="WrapWithOverflow" Visibility="Hidden"/> -->
+                                <local:SelectableTextBlock x:Name="TextThing" Padding="2,2,0,0" TextWrapping="WrapWithOverflow" Visibility="Visible">
+                                    <local:SelectableTextBlock.ContextMenu>
+                                        <ContextMenu x:Name="tContextMenu" Opened="tContextMenu_Opened">
+                                            <MenuItem x:Name="tContextSelect" Header="Select All" IsEnabled="False" Click="tContextItem_Click"/>
+                                            <MenuItem x:Name="tContextCopy" Header="Copy Selected Text" IsEnabled="False" Click="tContextItem_Click"/>
+                                            <Separator/>
+                                            <MenuItem x:Name="tContextClear" Header="Clear" IsEnabled="False"  Click="tContextItem_Click"/>
+                                        </ContextMenu>
+                                    </local:SelectableTextBlock.ContextMenu>
+                                </local:SelectableTextBlock>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                    <TextBox Margin="10,0,50,42" TextWrapping="Wrap" VerticalAlignment="Bottom" MinHeight="27" mah:TextBoxHelper.Watermark="Send a command..." IsEnabled="False" ToolTip="At the moment, it's not possible to send commands to the server" ToolTipService.ShowOnDisabled="True"/>
+                    <Button x:Name="SendMessageB" Content="Send" Margin="0,0,10,42" VerticalAlignment="Bottom" MinHeight="27" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Right" ToolTip="At the moment, it's not possible to send commands to the server" IsEnabled="False" ToolTipService.ShowOnDisabled="True"/>
+                    <Button x:Name="StartButton" Content="Start Server" Margin="277,0,10,10" VerticalAlignment="Bottom" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <CheckBox Content="Automatically Restart" HorizontalAlignment="Left" Margin="10,0,0,13" VerticalAlignment="Bottom" IsChecked="True"/>
+                    <CheckBox x:Name="UpdateCheckBox" Content="Check for Updates" HorizontalAlignment="Left" Margin="151,0,0,13" VerticalAlignment="Bottom" IsChecked="True" Click="Button_Click"/>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="162,10,0,0">
+                        <mah:Badged x:Name="WorldGenBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button x:Name="WorldGenConsoleButton" Content="WorldGen" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                        </mah:Badged>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="116,10,0,0">
+                        <mah:Badged x:Name="DebugBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button x:Name="DebugConsoleButton" Content="Debug" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                        </mah:Badged>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
+                        <mah:Badged x:Name="NormalBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button x:Name="NormalConsoleButton" Foreground="{DynamicResource MahApps.Brushes.Accent}" Content="Normal" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                        </mah:Badged>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,10,0,0">
+                        <mah:Badged x:Name="NetworkBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button x:Name="NetworkConsoleButton" Content="Network" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                        </mah:Badged>
+                    </Grid>
+                    <local:MessageConsole x:Name="NormalOutputConsole" Type="Normal" Margin="10,39,10,74" Title="Output Console (Normal)" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <local:MessageConsole x:Name="NetworkOutputConsole" Type="Network" Margin="10,39,10,74" Title="Output Console (Network)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <local:MessageConsole x:Name="DebugOutputConsole" Type="Debug"  Margin="10,39,10,74" Title="Output Console (Debug)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <local:MessageConsole x:Name="WorldGenOutputConsole" Type="WorldGen"  Margin="10,39,10,74" Title="Output Console (WorldGen)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="699,9,0,0">
+                        <mah:Badged BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button Content="Banned" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                        </mah:Badged>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="637,9,0,0">
+                        <mah:Badged BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button Content="Permitted" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                        </mah:Badged>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="586,9,0,0">
+                        <mah:Badged BadgePlacementMode="TopRight" Badge="0" ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button Content="Admins" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                        </mah:Badged>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="523,9,0,0">
+                        <mah:Badged BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Button Content="Player List" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click" Padding="5"/>
+                        </mah:Badged>
+                    </Grid>                    
+                </Grid>
+            </TabItem>
+            <TabItem Header="Server Settings">
+                <Grid x:Name="SettingsGrid" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                    <Label Content="Server Directory" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="ServerDirTextBox" Margin="10,41,65,0" TextWrapping="Wrap" VerticalAlignment="Top" ToolTip="Folder containing the valheim_server.exe file" mah:TextBoxHelper.Watermark="Example; C:/Program Files (x86)/Steam/steamapps/common/Valheim dedicated server" IsReadOnly="True" MinHeight="27" Focusable="False"/>
+                    <Button x:Name="ServerDirButton" Content="Browse" HorizontalAlignment="Right" Margin="694,41,10,0" VerticalAlignment="Top" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" MinWidth="50" IsTabStop="False"/>
+                    <GroupBox Header="Server Settings" Margin="10,135,10,10" mah:ControlsHelper.ContentCharacterCasing="Normal">
+                        <Grid>
+                            <Label Content="Server Name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="ServerNameTextBox" HorizontalAlignment="Left" Height="23" Margin="111,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184" mah:TextBoxHelper.Watermark="My Valheim Server" ToolTip="Enter your desired server name, unknown character limitations" MaxLines="1" MaxLength="64" IsTabStop="False" TextChanged="TextBox_TextChanged"/>
+                            <Label Content="Server Port" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+                            <mah:NumericUpDown x:Name="ServerPortNUD" HorizontalAlignment="Left" Margin="111,41,0,0" VerticalAlignment="Top" Width="184" Minimum="1024" Maximum="65535" ToolTip="Enter a number within the range of 1024-65535"  NumericInputMode="Numbers" ParsingNumberStyle="Integer" TextAlignment="Left" IsTabStop="False" ValueChanged="ServerPortNUD_ValueChanged"/>
+                            <Label Content="World" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
+                            <ComboBox x:Name="WorldsDropDown" HorizontalAlignment="Left" Margin="111,103,0,0" VerticalAlignment="Top" Width="184" mah:TextBoxHelper.Watermark="No World Selected..." IsTabStop="False" ToolTip="Choose a world, if the list is empty none were found. Change folder or create a new one." SelectionChanged="WorldsDropDown_SelectionChanged"/>
+                            <Label Content="Server Password" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+                            <PasswordBox x:Name="ServerPasswordTextBox" HorizontalAlignment="Left" Margin="111,72,0,0" VerticalAlignment="Top" Width="184" mah:TextBoxHelper.Watermark="Minimum 5 characters" IsTabStop="False" ToolTip="Password to enter the server, MUST be 5 characters or more!" PasswordChanged="ServerPassword_PasswordChanged"/>
+                            <Label Content="World Name" HorizontalAlignment="Left" Margin="300,10,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="WorldNameTextBox" HorizontalAlignment="Left" Height="23" Margin="382,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184" mah:TextBoxHelper.Watermark="MyNewWorld" ToolTip="Entering a name here will create a new world of said name when starting the server" MaxLines="1" MaxLength="64" IsTabStop="False" TextChanged="TextBox_TextChanged"/>
+                            <Label Content="World Seed" HorizontalAlignment="Left" Margin="300,41,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="WorldSeedTextBox" HorizontalAlignment="Left" Height="23" Margin="382,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184" mah:TextBoxHelper.Watermark="MySeed1234" MaxLines="1" MaxLength="64" IsTabStop="False" TextChanged="TextBox_TextChanged" IsEnabled="False" ToolTipService.ShowOnDisabled="True" ToolTip="The seed can not currently be set via the server. Create a new world locally instead."/>
+                        </Grid>
+                    </GroupBox>
+                    <Label Content="Save Directory" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="SaveDirTextBox" Margin="10,103,65,0" TextWrapping="Wrap" VerticalAlignment="Top" mah:TextBoxHelper.Watermark="Example; C:/Valheim_Worlds" ToolTip="Folder where saved worlds are located or where they should be saved" IsReadOnly="True" TextChanged="TextBox_TextChanged" MinHeight="27" Focusable="False"/>
+                    <Button x:Name="SaveDirButton" Content="Browse" HorizontalAlignment="Right" Margin="694,103,10,0" VerticalAlignment="Top" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" MinWidth="50" IsTabStop="False"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Player List">
+                <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                    <DataGrid x:Name="PlayerDataGrid" Height="306" Margin="10" Width="734" AutoGenerateColumns="True" ColumnHeaderStyle="{StaticResource NormalColumnHeader}">
+                        <DataGrid.Columns>
+                            <DataGridHyperlinkColumn Header="SteamID" Binding="{Binding Path=SteamID}" Width="Auto">
+                                <DataGridHyperlinkColumn.ElementStyle>
+                                    <Style>
+                                        <EventSetter Event="Hyperlink.Click" Handler="Hyperlink_Click"/>
+                                    </Style>
+                                </DataGridHyperlinkColumn.ElementStyle>
+                            </DataGridHyperlinkColumn>
+                            <DataGridTextColumn Header="Character Name" Binding="{Binding Path=CharName}" Width="Auto" ElementStyle="{StaticResource CenteredColumnText}"/>
+                            <DataGridTextColumn Header="Character ID" Binding="{Binding Path=CharID}" Width="Auto" ElementStyle="{StaticResource CenteredColumnText}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <StatusBar x:Name="StatusBar1" Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,354,0,0" VerticalAlignment="Bottom" Focusable="False" MinHeight="30" MaxHeight="30">
+            <DockPanel HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualWidth}" Margin="0">
+                <fa:ImageAwesome x:Name="ServerStateIcon" Icon="Cog" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Left" SpinDuration="3"/>
+                <Label x:Name="PlayerCountLabel" HorizontalAlignment="Right" Content="0/10" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,0,20,0"/>
+                <fa:ImageAwesome Icon="Users" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                <Label x:Name="CurrentStatusLabel" HorizontalAlignment="Stretch" Content="Server Status: Ready Starting" Padding="5,0" VerticalContentAlignment="Center"/>
+            </DockPanel>
+        </StatusBar>
+    </Grid>
+</mah:MetroWindow>
