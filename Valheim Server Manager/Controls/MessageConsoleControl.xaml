@@ -9,7 +9,8 @@
              d:DesignHeight="450" d:DesignWidth="800" HorizontalAlignment="Left" VerticalAlignment="Top">
     <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" Focusable="True" KeyDown="Border_KeyDown">
         <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
-            <TabItem Background="{DynamicResource MahApps.Brushes.ThemeBackground}" HorizontalAlignment="Center" VerticalAlignment="Top" IsSelected="True" Focusable="False" Header="{Binding Path=Title}" mah:HeaderedControlHelper.HeaderFontSize="14.0"/>
+            <TextBlock Text="{Binding Path=Title}" VerticalAlignment="Top" FontSize="14.0" HorizontalAlignment="Center"/>
+            <!--<TabItem Background="{DynamicResource MahApps.Brushes.ThemeBackground}" HorizontalAlignment="Center" VerticalAlignment="Top" IsSelected="True" Focusable="False" Header="{Binding Path=Title}" mah:HeaderedControlHelper.HeaderFontSize="14.0"/>-->
             <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" Margin="10,28,10,10">
                 <ScrollViewer x:Name="ContainerScroller" CanContentScroll="True" Margin="0">
                     <local:SelectableTextBlock x:Name="MessageContainer"/>

@@ -163,7 +163,7 @@ namespace Valheim_Server_Manager
         private Regex rxSteamID = new Regex(@"(\d{17})", RegexOptions.Compiled);
         private Regex rxCharName = new Regex(@"from\s(.+)\s:", (RegexOptions.Compiled | RegexOptions.IgnoreCase));
         private Regex rxCharID = new Regex(@"(\S\d{5,16}):1", RegexOptions.Compiled); // Not sure how long the CharID can be, so setting a range of 5 to 16
-        private Enums.ConsoleType currentConsole = Enums.ConsoleType.Normal;
+        private Enums.ConsoleType currentConsole = Enums.ConsoleType.Network;
         private Enums.ListType currentList = Enums.ListType.None;
 
         public MainWindow()
@@ -226,12 +226,9 @@ namespace Valheim_Server_Manager
 
         private void ValheimServer_OnOutputReceived(object sender, string outputMessage)
         {
-            //ParseMessage(outputMessage);
             if (!String.IsNullOrWhiteSpace(outputMessage))
             {
                 ConsoleMessage msg = new ConsoleMessage(outputMessage);
-                //if (msg.Type == Enums.MessageType.Debug)
-                //    return;
 
                 if (String.IsNullOrWhiteSpace(msg.Message) || msg.Message.Contains("<<IGNORE>>"))
                     return;
@@ -388,10 +385,6 @@ namespace Valheim_Server_Manager
 
             switch (type)
             {
-                case Enums.MessageType.Normal:
-                    NormalOutputConsole.AddMessage(msg);
-                    break;
-
                 case Enums.MessageType.Network:
                     NetworkOutputConsole.AddMessage(msg);
                     break;
@@ -439,32 +432,13 @@ namespace Valheim_Server_Manager
                 else
                     display.Visibility = Visibility.Collapsed;
             }
-
-            switch (lType)
-            {
-                case Enums.ListType.Admin:
-                    // Load File
-                    //AdminListBox.LoadEntriesFromFile(@"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\adminlist.txt");
-                    //AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
-                    break;
-
-                case Enums.ListType.Banned:
-                    //AdminListBox.LoadEntriesFromFile(@"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\bannedlist.txt");
-                    //AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
-                    break;
-
-                case Enums.ListType.Permitted:
-                    //AdminListBox.LoadEntriesFromFile(@"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\permittedlist.txt");
-                    //AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
-                    break;
-            }
         }
         private void SetActiveConsoleWindow(Enums.ConsoleType cType)
         {
             if (cType == currentConsole)
                 return;
 
-            List<MessageConsole> consoleList = new List<MessageConsole>() { NormalOutputConsole, NetworkOutputConsole, DebugOutputConsole, WorldGenOutputConsole };
+            List<MessageConsole> consoleList = new List<MessageConsole>() { NetworkOutputConsole, DebugOutputConsole, WorldGenOutputConsole };
 
             if (cType == Enums.ConsoleType.None)
             {
@@ -487,10 +461,6 @@ namespace Valheim_Server_Manager
 
             switch (cType)
             {
-                case Enums.ConsoleType.Normal:
-                    currentConsole = Enums.ConsoleType.Normal;
-                    ClearBadgeForButton(NormalConsoleButton);
-                    break;
                 case Enums.ConsoleType.Network:
                     ClearBadgeForButton(NetworkConsoleButton);
                     break;
@@ -506,9 +476,6 @@ namespace Valheim_Server_Manager
         }
         private void ClearBadgeForButton(Button button)
         {
-            if (button == NormalConsoleButton)
-                NormalBadge.Badge = null;
-
             if (button == NetworkConsoleButton)
                 NetworkBadge.Badge = null;
 
@@ -522,10 +489,6 @@ namespace Valheim_Server_Manager
         {
             switch (mType)
             {
-                case Enums.MessageType.Normal:
-                    if (NormalOutputConsole.Visibility == Visibility.Collapsed)
-                        NormalBadge.Badge = (NormalBadge.Badge == null ? 1 : ((int)NormalBadge.Badge + 1));
-                    return;
                 case Enums.MessageType.Network:
                     if (NetworkOutputConsole.Visibility == Visibility.Collapsed)
                         NetworkBadge.Badge = (NetworkBadge.Badge == null ? 1 : ((int)NetworkBadge.Badge + 1));
@@ -776,7 +739,7 @@ namespace Valheim_Server_Manager
         }
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Button> toggleButtons = new List<Button>() { NormalConsoleButton, NetworkConsoleButton, DebugConsoleButton, WorldGenConsoleButton, PlayerListButton, AdminButton, BannedButton, PermittedButton };
+            List<Button> toggleButtons = new List<Button>() { NetworkConsoleButton, DebugConsoleButton, WorldGenConsoleButton, PlayerListButton, AdminButton, BannedButton, PermittedButton };
             
             var accentBrush = (Brush)FindResource("MahApps.Brushes.Accent");
             var textBrush = (Brush)FindResource("MahApps.Brushes.Text");
@@ -820,12 +783,6 @@ namespace Valheim_Server_Manager
             #endregion
 
             #region Console Buttons
-            if (sender == NormalConsoleButton)
-            {
-                //NormalConsoleButton.Foreground = (Brush)FindResource("MahApps.Brushes.Accent2");
-                SetActiveConsoleWindow(Enums.ConsoleType.Normal);
-                return;
-            }
             if (sender == NetworkConsoleButton)
             {
                 SetActiveConsoleWindow(Enums.ConsoleType.Network);
