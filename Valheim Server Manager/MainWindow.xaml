@@ -44,8 +44,8 @@
                     <TextBox Margin="10,0,50,42" TextWrapping="Wrap" VerticalAlignment="Bottom" MinHeight="27" mah:TextBoxHelper.Watermark="Send a command..." IsEnabled="False" ToolTip="At the moment, it's not possible to send commands to the server" ToolTipService.ShowOnDisabled="True"/>
                     <Button x:Name="SendMessageB" Content="Send" Margin="0,0,10,42" VerticalAlignment="Bottom" MinHeight="27" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Right" ToolTip="At the moment, it's not possible to send commands to the server" IsEnabled="False" ToolTipService.ShowOnDisabled="True"/>
                     <Button x:Name="StartButton" Content="Start Server" Margin="277,0,10,10" VerticalAlignment="Bottom" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
-                    <CheckBox Content="Automatically Restart" HorizontalAlignment="Left" Margin="10,0,0,13" VerticalAlignment="Bottom" IsChecked="True"/>
-                    <CheckBox x:Name="UpdateCheckBox" Content="Check for Updates" HorizontalAlignment="Left" Margin="151,0,0,13" VerticalAlignment="Bottom" IsChecked="True" Click="Button_Click"/>
+                    <CheckBox Content="Automatically Restart" HorizontalAlignment="Left" Margin="10,0,0,13" VerticalAlignment="Bottom" IsChecked="True" IsEnabled="False"/>
+                    <CheckBox x:Name="UpdateCheckBox" Content="Check for Updates" HorizontalAlignment="Left" Margin="151,0,0,13" VerticalAlignment="Bottom" IsChecked="True" Click="Button_Click" IsEnabled="False"/>
                     <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="162,10,0,0">
                         <mah:Badged x:Name="WorldGenBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
                             <Button x:Name="WorldGenConsoleButton" Content="WorldGen" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
@@ -71,17 +71,17 @@
                     <local:MessageConsole x:Name="DebugOutputConsole" Type="Debug"  Margin="10,39,10,74" Title="Output Console (Debug)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     <local:MessageConsole x:Name="WorldGenOutputConsole" Type="WorldGen"  Margin="10,39,10,74" Title="Output Console (WorldGen)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,9,10,0">
-                        <mah:Badged x:Name="BanBadge" BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                        <mah:Badged x:Name="BanBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Badge="{Binding ElementName=BanListBox, Path=ListCount}">
                             <Button x:Name="BannedButton" Content="Banned" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                         </mah:Badged>
                     </Grid>
                     <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,9,60,0">
-                        <mah:Badged x:Name="PermitBadge" BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                        <mah:Badged x:Name="PermitBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Badge="{Binding ElementName=PermitListBox, Path=ListCount}">
                             <Button x:Name="PermittedButton" Content="Permitted" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                         </mah:Badged>
                     </Grid>
                     <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,9,122,0">
-                        <local:FixedBadged x:Name="AdminBadge" BadgePlacementMode="TopRight" Badge="0" ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                        <local:FixedBadged x:Name="AdminBadge" BadgePlacementMode="TopRight" ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Badge="{Binding ElementName=AdminListBox, Path=ListCount}">
                             <Button x:Name="AdminButton" Content="Admins" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                         </local:FixedBadged>
                     </Grid>

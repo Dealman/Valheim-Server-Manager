@@ -57,6 +57,28 @@ namespace Valheim_Server_Manager
             return null;
         }
 
+        public static string GetListPath(Enums.ListType type)
+        {
+            string path;
+
+            switch (type)
+            {
+                case Enums.ListType.Admin:
+                    path = Path.Combine(GetDefaultSaveDir(), "adminlist.txt");
+                    return path;
+
+                case Enums.ListType.Banned:
+                    path = Path.Combine(GetDefaultSaveDir(), "bannedlist.txt");
+                    return path;
+
+                case Enums.ListType.Permitted:
+                    path = Path.Combine(GetDefaultSaveDir(), "permittedlist.txt");
+                    return path;
+            }
+
+            return null;
+        }
+
         public static List<string> GetWorldList(string path)
         {
             if (!String.IsNullOrWhiteSpace(path) && Directory.Exists(path))

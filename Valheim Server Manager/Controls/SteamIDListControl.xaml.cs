@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,25 +21,33 @@ using MahApps.Metro.Controls.Dialogs;
 
 namespace Valheim_Server_Manager
 {
-    public partial class CustomListDisplay : UserControl
+    public partial class CustomListDisplay : UserControl, INotifyPropertyChanged
     {
         public string Title { get; set; } = "My List";
-        public Enums.ListType Type { get; set; } = Enums.ListType.Admin;
+        public Enums.ListType Type { get; set; }
+        private int count = 0;
+        public int ListCount { get { return count; } set { if (value != count) count = value; OnPropertyChanged(); } }
 
         private string previousPath;
         // TODO: Should check if these comments are necessary or not, with 99% likeliness they can probably be removed as they're just comments
         // depends on how Valheim reads the files /shrug
-        private string[] filePrefixes = new string[]{ "// List admin players ID  ONE per line", "// List banned players ID  ONE per line", "// List permitted players ID ONE per line" };
+        private string[] filePrefixes = new string[]{ "", "// List admin players ID  ONE per line", "// List banned players ID  ONE per line", "// List permitted players ID ONE per line" };
+
+        #region INotifyPropertyChanged Implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        #endregion
 
         public CustomListDisplay()
         {
             InitializeComponent();
-            DataContext = this;
-
-            //LoadEntriesFromFile(@"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\adminlist.txt");
-            //previousPath = @"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\adminlist.txt";
         }
 
+        #region List Related Methods
         private bool IsValidSteamID(string id)
         {
             if (!String.IsNullOrWhiteSpace(id) && long.TryParse(id, out long steamID))
@@ -46,11 +56,99 @@ namespace Valheim_Server_Manager
 
             return false;
         }
-
         public int GetNumberOfEntries()
         {
             return IDListBox.Items.Count;
         }
+        private async void InvalidList()
+        {
+            MainWindow mw = (Application.Current.MainWindow as MainWindow);
+
+            var result = await DialogManager.ShowMessageAsync(mw, "Warning", $"The {Type.ToString()}list.txt appears to be invalid/corrupted, would you like to attempt and fix it?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "Yes", NegativeButtonText = "No", DefaultButtonFocus = MessageDialogResult.Affirmative});
+            if (result == MessageDialogResult.Affirmative)
+            {
+                FixList();
+            }
+        }
+        private async void FixList()
+        {
+            if (File.Exists(previousPath))
+            {
+                var allLines = File.ReadLines(previousPath);
+                if (allLines.Count() > 0)
+                {
+                    List<string> idList = new List<string>();
+
+                    foreach (var line in allLines)
+                    {
+                        if (String.IsNullOrWhiteSpace(line) || line.Contains("//"))
+                            continue;
+
+                        if (IsValidSteamID(line))
+                            idList.Add(line);
+                    }
+
+                    string prefix = filePrefixes[(int)Type];
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine(prefix);
+
+                    if (idList.Count() > 0)
+                    {
+                        idList.ForEach(x => sb.AppendLine(x));
+                        File.WriteAllText(previousPath, sb.ToString());
+                        if (ValidateList())
+                        {
+                            MainWindow mw = (Application.Current.MainWindow as MainWindow);
+                            await DialogManager.ShowMessageAsync(mw, "Information", $"Successfully fixed corrupted {Type.ToString()}list.txt");
+                            LoadEntriesFromFile(previousPath);
+                        } else {
+                            MainWindow mw = (Application.Current.MainWindow as MainWindow);
+                            await DialogManager.ShowMessageAsync(mw, "Information", "Ran into an unknown error when trying to fix the file, sorry :(");
+                        }
+                    } else {
+                        File.WriteAllText(previousPath, prefix);
+                        if (ValidateList())
+                        {
+                            MainWindow mw = (Application.Current.MainWindow as MainWindow);
+                            await DialogManager.ShowMessageAsync(mw, "Information", $"Successfully fixed corrupted {Type.ToString()}list.txt");
+                        } else {
+                            MainWindow mw = (Application.Current.MainWindow as MainWindow);
+                            await DialogManager.ShowMessageAsync(mw, "Information", "Ran into an unknown error when trying to fix the file, sorry :(");
+                        }
+                    }
+                }
+            }
+        }
+        private bool ValidateList()
+        {
+            if (File.Exists(previousPath))
+            {
+                var allLines = File.ReadLines(previousPath);
+
+                if (allLines.Count() > 0)
+                {
+                    List<string> idList = new List<string>();
+
+                    foreach(var line in allLines)
+                    {
+                        if (String.IsNullOrWhiteSpace(line) || line.Contains("//"))
+                            continue;
+
+                        if (IsValidSteamID(line))
+                            idList.Add(line);
+                        else
+                            return false;
+                    }
+
+                    // List can obviously still be valid even if it contains no SteamIDs...
+                    if (idList.Count() >= 0)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+        #endregion
 
         #region File Methods
         public void SaveEntriesToFile(string path = "")
@@ -63,7 +161,7 @@ namespace Valheim_Server_Manager
                 } else {
                     if (File.Exists(previousPath))
                     {
-                        string prefix = filePrefixes[(int)Type];// "// List admin players ID  ONE per line\n";
+                        string prefix = filePrefixes[(int)Type];
 
                         if (IDListBox.Items.Count > 0)
                         {
@@ -106,9 +204,13 @@ namespace Valheim_Server_Manager
                             // If necessary, can use Regex here
                         } else {
                             if (IsValidSteamID(line))
+                            {
                                 idList.Add(line);
-                            else
+                            } else {
+                                previousPath = path;
+                                InvalidList();
                                 return false;
+                            }
                         }
                     }
 
@@ -116,8 +218,10 @@ namespace Valheim_Server_Manager
                     {
                         idList.ForEach(x => IDListBox.Items.Add(x));
                         previousPath = path;
+                        ListCount = IDListBox.Items.Count;
                         return true;
                     } else {
+                        previousPath = path;
                         return false;
                     }
                 }
@@ -221,6 +325,8 @@ namespace Valheim_Server_Manager
                     }
                 }
             }
+
+            ListCount = IDListBox.Items.Count;
         }
         private void IDListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

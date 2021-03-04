@@ -462,11 +462,13 @@ namespace Valheim_Server_Manager
                     break;
 
                 case Enums.ListType.Banned:
-                    // Load File
+                    //AdminListBox.LoadEntriesFromFile(@"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\bannedlist.txt");
+                    //AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
                     break;
 
                 case Enums.ListType.Permitted:
-                    // Load File
+                    //AdminListBox.LoadEntriesFromFile(@"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\permittedlist.txt");
+                    //AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
                     break;
             }
         }
@@ -496,38 +498,20 @@ namespace Valheim_Server_Manager
             if (accentBrush == null || textBrush == null)
                 return;
 
-            // TODO: Clear badge
             switch (cType)
             {
                 case Enums.ConsoleType.Normal:
-                    //NormalConsoleButton.Foreground = accentBrush;
-                    //NetworkConsoleButton.Foreground = textBrush;
-                    //DebugConsoleButton.Foreground = textBrush;
-                    //WorldGenConsoleButton.Foreground = textBrush;
                     currentConsole = Enums.ConsoleType.Normal;
                     ClearBadgeForButton(NormalConsoleButton);
                     break;
                 case Enums.ConsoleType.Network:
-                    //NormalConsoleButton.Foreground = textBrush;
-                    //NetworkConsoleButton.Foreground = accentBrush;
-                    //DebugConsoleButton.Foreground = textBrush;
-                    //WorldGenConsoleButton.Foreground = textBrush;
-                    //currentConsole = Enums.ConsoleType.Network;
                     ClearBadgeForButton(NetworkConsoleButton);
                     break;
                 case Enums.ConsoleType.Debug:
-                    //NormalConsoleButton.Foreground = textBrush;
-                    //NetworkConsoleButton.Foreground = textBrush;
-                    //DebugConsoleButton.Foreground = accentBrush;
-                    //WorldGenConsoleButton.Foreground = textBrush;
                     currentConsole = Enums.ConsoleType.Debug;
                     ClearBadgeForButton(DebugConsoleButton);
                     break;
                 case Enums.ConsoleType.WorldGen:
-                    //NormalConsoleButton.Foreground = textBrush;
-                    //NetworkConsoleButton.Foreground = textBrush;
-                    //DebugConsoleButton.Foreground = textBrush;
-                    //WorldGenConsoleButton.Foreground = accentBrush;
                     currentConsole = Enums.ConsoleType.WorldGen;
                     ClearBadgeForButton(WorldGenConsoleButton);
                     break;
@@ -711,9 +695,9 @@ namespace Valheim_Server_Manager
 
 
             // TODO: This needs refactoring, just testing atm
-            string adminList = Path.GetFullPath(Path.Combine(saveDirectory, @"..\", "adminlist.txt"));
-            AdminListBox.LoadEntriesFromFile(adminList);
-            AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
+            AdminListBox.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Admin));
+            PermitListBox.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Permitted));
+            BanListBox.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Banned));
         }
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
