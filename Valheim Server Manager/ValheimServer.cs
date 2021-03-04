@@ -127,11 +127,6 @@ namespace Valheim_Server_Manager
 
         public static async Task StartAsync(ServerSettings serverSettings)
         {
-            // TODO: Start the server
-            // processInfo.EnvironmentVariables["SteamAppId"] = ValheimManager.ServerAppID;
-            //if (!ValidateServerSettings(serverSettings))
-            //    return;
-
             // Update Server State: Starting
             ServerStateChanged(null, new StateChangedArgs() { NewState = Enums.ServerStateEnum.Starting });
 
@@ -140,7 +135,6 @@ namespace Valheim_Server_Manager
             // Set up the StartInfo, such as the server parameters
             ProcessStartInfo startInfo = new ProcessStartInfo(serverSettings.ServerPath)
             {
-                // valheim_server -nographics -batchmode -name "Dealmans Ghetto" -port 2456 -world "Dedicated" -password "12345"
                 Arguments = $"-nographics -batchmode -name \"{currentSettings.ServerName}\" -port {currentSettings.ServerPort} -world \"{currentSettings.WorldName}\" -password \"{currentSettings.ServerPassword}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true,
@@ -159,8 +153,6 @@ namespace Valheim_Server_Manager
             // Bind the events
             serverProcess.OutputDataReceived += ServerOutputReceived;
             serverProcess.Exited += ServerStopped;
-            //serverProcess.Exited += ServerProcessExited;
-            //serverProcess.Disposed += ServerProcessExited;
 
             serverProcess.Start();
             serverProcess.BeginOutputReadLine();
@@ -255,45 +247,6 @@ namespace Valheim_Server_Manager
             // Weren't able to get the hidden window, kill process? Is it safe? World save? IronGate pls...
             currentSettings.ServerProcess.CloseMainWindow();
             currentSettings.ServerProcess.Kill();
-        }
-
-
-        public static Tuple<bool, List<string>> ValidateAdminList(string path)
-        {
-            if (File.Exists(path))
-            {
-                var lines = File.ReadLines(path);
-
-                if(lines.Count() > 0)
-                {
-                    List<string> idList = new List<string>();
-
-                    foreach(var line in lines)
-                    {
-                        if (String.IsNullOrWhiteSpace(line))
-                            continue;
-
-                        if (line.Substring(0,2) == "//")
-                        {
-                            // Line's a commented, assume this is omitted by Valheim
-                            // If necessary, can use Regex here - spaces would trigger this check
-                        } else {
-                            // Not a commented line, let's check it for a SteamID
-                            var match = rxSteamID.Match(line);
-
-                            // Not a match, so we assume the line is invalid
-                            if (!match.Success)
-                                return Tuple.Create(false, new List<string>());// false;
-
-                            idList.Add(match.Value);
-                        }
-                    }
-
-                    return Tuple.Create(true, idList);
-                }
-            }
-
-            return Tuple.Create(false, new List<string>());
         }
     }
 }

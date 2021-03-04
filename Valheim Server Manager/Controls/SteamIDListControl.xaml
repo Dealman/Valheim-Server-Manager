@@ -17,7 +17,7 @@
                     <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource BackgroundConverter}}"/>
                 </Style>
             </Grid.Resources>
-            <TextBlock Text="{Binding Path=Title}" Foreground="{DynamicResource MahApps.Brushes.Accent}" Margin="0,0,0,131" TextAlignment="Center"/>
+            <TextBlock Text="{Binding Path=Title}" Margin="0,0,0,131" TextAlignment="Center" FontSize="14"/>
             <ListBox x:Name="IDListBox" Margin="0,26,0,42" HorizontalContentAlignment="Center" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,1" AlternationCount="2" ItemContainerStyle="{StaticResource AlternatingBinding}" SelectionChanged="IDListBox_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="String">

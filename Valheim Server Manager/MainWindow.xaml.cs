@@ -23,19 +23,6 @@ using FontAwesome.WPF;
 
 namespace Valheim_Server_Manager
 {
-    // TODO: Migrate to using this struct eventually, low priority
-    /*
-    public struct ServerSettings
-    {
-        public string WorkingDirectory { get; set; }
-        public string SaveDirectory { get; set; }
-        public string WorldName { get; set; }
-        public Process ServerProcess { get; set; }
-        public Enums.DebugLevel DebugLevel { get; set; }
-        public Enums.ServerState ServerState { get; set; }
-    }
-    */
-
     internal class DispatcherWinFormsCompatAdapter : ISynchronizeInvoke
     {
         #region IAsyncResult implementation
@@ -692,7 +679,6 @@ namespace Valheim_Server_Manager
             syncContext = SynchronizationContext.Current;
 
             IsServerSetupValid();
-
 
             // TODO: This needs refactoring, just testing atm
             AdminListBox.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Admin));

@@ -23,7 +23,8 @@ namespace Valheim_Server_Manager
 {
     public partial class CustomListDisplay : UserControl, INotifyPropertyChanged
     {
-        public string Title { get; set; } = "My List";
+        private string title = "List";
+        public string Title { get { return title; } set { if (value != title) title = value; OnPropertyChanged(); } }
         public Enums.ListType Type { get; set; }
         private int count = 0;
         public int ListCount { get { return count; } set { if (value != count) count = value; OnPropertyChanged(); } }
@@ -45,6 +46,7 @@ namespace Valheim_Server_Manager
         public CustomListDisplay()
         {
             InitializeComponent();
+            DataContext = this;
         }
 
         #region List Related Methods
