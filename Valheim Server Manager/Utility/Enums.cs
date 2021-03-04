@@ -33,17 +33,19 @@ namespace Valheim_Server_Manager
 
         public enum ConsoleType
         {
+            None = 0,
             Normal,
             Network,
             Debug,
             WorldGen
         }
 
-        public enum ConnectionState
+        public enum ListType
         {
-            Request,
-            Handshake,
-            Connected
+            None = 0,
+            Admin,
+            Banned,
+            Permitted
         }
 
         public enum ServerStateEnum
@@ -53,17 +55,6 @@ namespace Valheim_Server_Manager
             Closing,
             Starting,
             Online
-        }
-
-        public enum ServerEventEnum
-        {
-            Unknown,
-            ClientConnecting,
-            ClientConnected,
-            ClientWrongPassword,
-            CharacterAssigned,
-            ClientDisconnecting,
-            ClientDisconnected
         }
 
         public enum ServerExitEnum

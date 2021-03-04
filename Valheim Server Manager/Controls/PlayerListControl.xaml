@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Valheim_Server_Manager.PlayerListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:local="clr-namespace:Valheim_Server_Manager"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="MyColumnHeader" 
+               BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}" 
+               TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="MyCellStyle" BasedOn="{StaticResource MahApps.Styles.DataGridCell}" TargetType="{x:Type DataGridCell}">
+            <Setter Property="TextBlock.HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1">
+        <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+            <DockPanel LastChildFill="True">
+                <TextBlock Text="Player List" Foreground="{DynamicResource MahApps.Brushes.Text}" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="14" DockPanel.Dock="Top"/>
+                <DataGrid x:Name="PlayerDataGrid" ItemsSource="{Binding}" VerticalContentAlignment="Stretch" DockPanel.Dock="Bottom" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,1,0,0" IsReadOnly="True" AutoGenerateColumns="False" ColumnHeaderStyle="{StaticResource MyColumnHeader}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=CharacterName}" CellStyle="{StaticResource MyCellStyle}"/>
+                        <DataGridTextColumn Header="CharID" Width="*" Binding="{Binding Path=CharacterID}" CellStyle="{StaticResource MyCellStyle}"/>
+                        <DataGridHyperlinkColumn Header="SteamID" Width="*" Binding="{Binding Path=SteamID}" ContentBinding="{Binding Path=SteamID}" CellStyle="{StaticResource MyCellStyle}">
+                            <DataGridHyperlinkColumn.ElementStyle>
+                                <Style>
+                                    <EventSetter Event="Hyperlink.Click" Handler="Hyperlink_Click"/>
+                                </Style>
+                            </DataGridHyperlinkColumn.ElementStyle>
+                        </DataGridHyperlinkColumn>
+                        <!--<DataGridTextColumn Header="SteamID" Width="*" Binding="{Binding Path=SteamID}" CellStyle="{StaticResource MyCellStyle}"/>-->
+                        <DataGridTextColumn Header="Joined" Width="*" Binding="{Binding Path=JoinTime, StringFormat='dd/MM/yyyy HH:mm:ss'}" CellStyle="{StaticResource MyCellStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Grid>
+    </Border>
+</UserControl>

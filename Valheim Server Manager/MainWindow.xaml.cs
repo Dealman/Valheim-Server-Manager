@@ -176,8 +176,8 @@ namespace Valheim_Server_Manager
         private Regex rxSteamID = new Regex(@"(\d{17})", RegexOptions.Compiled);
         private Regex rxCharName = new Regex(@"from\s(.+)\s:", (RegexOptions.Compiled | RegexOptions.IgnoreCase));
         private Regex rxCharID = new Regex(@"(\S\d{5,16}):1", RegexOptions.Compiled); // Not sure how long the CharID can be, so setting a range of 5 to 16
-        private List<RunCustom> runList = new List<RunCustom>();
         private Enums.ConsoleType currentConsole = Enums.ConsoleType.Normal;
+        private Enums.ListType currentList = Enums.ListType.None;
 
         public MainWindow()
         {
@@ -250,6 +250,97 @@ namespace Valheim_Server_Manager
                     return;
 
                 AddConsoleMessage(msg.Message, msg.Type, msg.Brush, msg.Weight, msg.Size);
+
+                if (msg.Type == Enums.MessageType.Network)
+                    ParseMessageForConnection(msg.OriginalMessage);
+            }
+        }
+
+        private void ParseMessageForConnection(string msg)
+        {
+            // Someone's trying to connect, try to fetch the SteamID
+            if (msg.Contains("Got connection SteamID"))
+            {
+                Match match = rxSteamID.Match(msg);
+                if (!String.IsNullOrWhiteSpace(match.Value))
+                {
+                    // Someone is connecting, we got their SteamID, no handshake yet
+                    Player newPlayer = new Player(match.Value);
+                    newPlayer.RequestReceived = true;
+                    playerList.Add(newPlayer);
+                }
+            }
+            // Got a handshake from a connecting client, fetch the SteamID and find the matching Player class
+            if (msg.Contains("Got handshake from client"))
+            {
+                Match match = rxSteamID.Match(msg);
+                if (!String.IsNullOrWhiteSpace(match.Value))
+                {
+                    // We now got a handshake from someone
+                    foreach (Player player in playerList)
+                    {
+                        if (player.SteamID == match.Value)
+                        {
+                            player.HandshakeReceived = true;
+                            return;
+                        }
+                    }
+                }
+            }
+            // Client is now successfully connected to the server and will be assigned a char soon
+            if (msg.Contains("New peer connected"))
+            {
+                foreach (Player player in playerList)
+                {
+                    if (player.RequestReceived && player.HandshakeReceived && !player.IsConnected)
+                    {
+                        player.IsConnected = true;
+                        playerCount++;
+                        UpdatePlayerCount(playerCount);
+                        return;
+                    }
+                }
+            }
+            // TODO: If ZDO ends with :0, someone died. If it ends with :1, they just connected. Anything other than 0 or 1, is a new ID when they respawn
+            if (msg.Contains("Got character ZDOID"))
+            {
+                foreach (Player player in playerList)
+                {
+                    if (player.RequestReceived && player.HandshakeReceived && player.IsConnected && (String.IsNullOrEmpty(player.CharacterName) || String.IsNullOrEmpty(player.CharacterID)))
+                    {
+                        player.IsConnected = true;
+                        player.CharacterName = rxCharName.Match(msg).Groups[1].Value;
+                        player.CharacterID = rxCharID.Match(msg).Groups[1].Value;
+                        player.JoinTime = DateTime.Now;
+
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            NewPlayerList.AddPlayer(player);
+                        });
+                    }
+                }
+            }
+            // Player Leaving
+            if (msg.Contains("Closing socket"))
+            {
+                Match match = rxSteamID.Match(msg);
+                if (!String.IsNullOrWhiteSpace(match.Value))
+                {
+                    Player leavingPlayer = playerList.Find(x => (x.SteamID == match.Value));
+                    if (leavingPlayer != null)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            NewPlayerList.RemovePlayer(leavingPlayer);
+                        });
+
+                        if (playerCount > 0)
+                        {
+                            playerCount--;
+                            UpdatePlayerCount(playerCount);
+                        }
+                    }
+                }
             }
         }
 
@@ -297,6 +388,7 @@ namespace Valheim_Server_Manager
             this.Dispatcher.Invoke(() =>
             {
                 PlayerCountLabel.Content = $"{newCount}/10";
+                PlayerCountBadge.Badge = newCount;
             });
         }
         private void AddConsoleMessage(string msg, Enums.MessageType type, Brush msgColour = null, FontWeight? msgWeight = null, double msgSize = 12)
@@ -328,30 +420,55 @@ namespace Valheim_Server_Manager
 
             this.Dispatcher.Invoke(() =>
             {
-                // TODO: Revert to normal Run? Can't recall if I still use MessageType here D:
-                RunCustom run = new RunCustom
+                Run run = new Run
                 {
                     Text = msg + "\n",
                     Foreground = msgColour,
                     FontWeight = msgWeight.GetValueOrDefault(),
-                    FontSize = msgSize,
-                    MessageType = type
-                };
-
-                /*
-                Run run = new Run
-                {
-                    Text = msg+"\n",
-                    Foreground = msgColour,
-                    FontWeight = msgWeight.GetValueOrDefault(),
                     FontSize = msgSize
                 };
-                */
-                runList.Add(run);
+
                 TextThing.Inlines.Add(run);
                 Scrolleroni.ScrollToEnd();
                 IncrementBadge(type);
             });
+        }
+        private void SetActiveListView(Enums.ListType lType)
+        {
+            if (lType == currentList)
+                return;
+
+            List<CustomListDisplay> displayList = new List<CustomListDisplay>() { AdminListBox, BanListBox, PermitListBox };
+
+            if (lType == Enums.ListType.None)
+            {
+                displayList.ForEach(x => x.Visibility = Visibility.Collapsed);
+            }
+
+            foreach(CustomListDisplay display in displayList)
+            {
+                if (display.Type == lType)
+                    display.Visibility = Visibility.Visible;
+                else
+                    display.Visibility = Visibility.Collapsed;
+            }
+
+            switch (lType)
+            {
+                case Enums.ListType.Admin:
+                    // Load File
+                    //AdminListBox.LoadEntriesFromFile(@"C:\Users\Dealman\AppData\LocalLow\IronGate\Valheim\adminlist.txt");
+                    //AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
+                    break;
+
+                case Enums.ListType.Banned:
+                    // Load File
+                    break;
+
+                case Enums.ListType.Permitted:
+                    // Load File
+                    break;
+            }
         }
         private void SetActiveConsoleWindow(Enums.ConsoleType cType)
         {
@@ -360,7 +477,13 @@ namespace Valheim_Server_Manager
 
             List<MessageConsole> consoleList = new List<MessageConsole>() { NormalOutputConsole, NetworkOutputConsole, DebugOutputConsole, WorldGenOutputConsole };
 
-            foreach(MessageConsole console in consoleList)
+            if (cType == Enums.ConsoleType.None)
+            {
+                consoleList.ForEach(x => x.Visibility = Visibility.Collapsed);
+                return;
+            }
+
+            foreach (MessageConsole console in consoleList)
             {
                 if (console.Type == cType)
                     console.Visibility = Visibility.Visible;
@@ -377,34 +500,34 @@ namespace Valheim_Server_Manager
             switch (cType)
             {
                 case Enums.ConsoleType.Normal:
-                    NormalConsoleButton.Foreground = accentBrush;
-                    NetworkConsoleButton.Foreground = textBrush;
-                    DebugConsoleButton.Foreground = textBrush;
-                    WorldGenConsoleButton.Foreground = textBrush;
+                    //NormalConsoleButton.Foreground = accentBrush;
+                    //NetworkConsoleButton.Foreground = textBrush;
+                    //DebugConsoleButton.Foreground = textBrush;
+                    //WorldGenConsoleButton.Foreground = textBrush;
                     currentConsole = Enums.ConsoleType.Normal;
                     ClearBadgeForButton(NormalConsoleButton);
                     break;
                 case Enums.ConsoleType.Network:
-                    NormalConsoleButton.Foreground = textBrush;
-                    NetworkConsoleButton.Foreground = accentBrush;
-                    DebugConsoleButton.Foreground = textBrush;
-                    WorldGenConsoleButton.Foreground = textBrush;
-                    currentConsole = Enums.ConsoleType.Network;
+                    //NormalConsoleButton.Foreground = textBrush;
+                    //NetworkConsoleButton.Foreground = accentBrush;
+                    //DebugConsoleButton.Foreground = textBrush;
+                    //WorldGenConsoleButton.Foreground = textBrush;
+                    //currentConsole = Enums.ConsoleType.Network;
                     ClearBadgeForButton(NetworkConsoleButton);
                     break;
                 case Enums.ConsoleType.Debug:
-                    NormalConsoleButton.Foreground = textBrush;
-                    NetworkConsoleButton.Foreground = textBrush;
-                    DebugConsoleButton.Foreground = accentBrush;
-                    WorldGenConsoleButton.Foreground = textBrush;
+                    //NormalConsoleButton.Foreground = textBrush;
+                    //NetworkConsoleButton.Foreground = textBrush;
+                    //DebugConsoleButton.Foreground = accentBrush;
+                    //WorldGenConsoleButton.Foreground = textBrush;
                     currentConsole = Enums.ConsoleType.Debug;
                     ClearBadgeForButton(DebugConsoleButton);
                     break;
                 case Enums.ConsoleType.WorldGen:
-                    NormalConsoleButton.Foreground = textBrush;
-                    NetworkConsoleButton.Foreground = textBrush;
-                    DebugConsoleButton.Foreground = textBrush;
-                    WorldGenConsoleButton.Foreground = accentBrush;
+                    //NormalConsoleButton.Foreground = textBrush;
+                    //NetworkConsoleButton.Foreground = textBrush;
+                    //DebugConsoleButton.Foreground = textBrush;
+                    //WorldGenConsoleButton.Foreground = accentBrush;
                     currentConsole = Enums.ConsoleType.WorldGen;
                     ClearBadgeForButton(WorldGenConsoleButton);
                     break;
@@ -429,158 +552,22 @@ namespace Valheim_Server_Manager
             switch (mType)
             {
                 case Enums.MessageType.Normal:
-                    if (currentConsole != Enums.ConsoleType.Normal)
+                    if (NormalOutputConsole.Visibility == Visibility.Collapsed)
                         NormalBadge.Badge = (NormalBadge.Badge == null ? 1 : ((int)NormalBadge.Badge + 1));
                     return;
                 case Enums.MessageType.Network:
-                    if (currentConsole != Enums.ConsoleType.Network)
+                    if (NetworkOutputConsole.Visibility == Visibility.Collapsed)
                         NetworkBadge.Badge = (NetworkBadge.Badge == null ? 1 : ((int)NetworkBadge.Badge + 1));
                     return;
                 case Enums.MessageType.Debug:
-                    if (currentConsole != Enums.ConsoleType.Debug)
+                    if (DebugOutputConsole.Visibility == Visibility.Collapsed)
                         DebugBadge.Badge = (DebugBadge.Badge == null ? 1 : ((int)DebugBadge.Badge + 1));
                     return;
                 case Enums.MessageType.WorldGen:
-                    if (currentConsole != Enums.ConsoleType.WorldGen)
+                    if (WorldGenOutputConsole.Visibility == Visibility.Collapsed)
                         WorldGenBadge.Badge = (WorldGenBadge.Badge == null ? 1 : ((int)WorldGenBadge.Badge + 1));
                     return;
             }
-        }
-        #endregion
-
-        #region Server Management
-        private void ParseMessage(string message)
-        {
-            if (String.IsNullOrWhiteSpace(message))
-                return;
-
-            var messageType = Enums.MessageType.Normal;
-            var messageBrush = Brushes.White;
-            var messageWeight = FontWeights.Normal;
-
-            messageType = MessageParser.GetMessageType(message);
-
-            if (messageType != Enums.MessageType.None)
-                messageBrush = MessageParser.GetMessageBrush(messageType);
-
-            // TODO: Clean this dirty mess up
-            // TODO: Test dying, two people connecting at the same time
-            if (messageType == Enums.MessageType.PlayerConnect)
-            {
-                if (message.Contains("Got session request from"))
-                {
-                    Match match = rxSteamID.Match(message);
-                    if (!String.IsNullOrWhiteSpace(match.Value))
-                    {
-                        // Someone is connecting, we got their SteamID, no handshake yet
-                        Player newPlayer = new Player(match.Value);
-                        newPlayer.RequestReceived = true;
-                        playerList.Add(newPlayer);
-                    }
-                }
-                if (message.Contains("Got handshake from client"))
-                {
-                    Match match = rxSteamID.Match(message);
-                    if (!String.IsNullOrWhiteSpace(match.Value))
-                    {
-                        // We now got a handshake from someone
-                        foreach (Player player in playerList)
-                        {
-                            if (player.SteamID == match.Value)
-                            {
-                                player.HandshakeReceived = true;
-                                return;
-                            }
-                        }
-                    }
-                }
-                if (message.Contains("New peer connected")) 
-                {
-                    foreach (Player player in playerList)
-                    {
-                        if (player.RequestReceived && player.HandshakeReceived && !player.IsConnected)
-                        {
-                            player.IsConnected = true;
-                            playerCount++;
-                            UpdatePlayerCount(playerCount);
-                            return;
-                        }
-                    }
-                }
-                if (message.Contains("Got character ZDOID"))
-                {
-                    foreach (Player player in playerList)
-                    {
-                        if (player.RequestReceived && player.HandshakeReceived && player.IsConnected && (String.IsNullOrEmpty(player.CharacterName) || String.IsNullOrEmpty(player.CharacterID)))
-                        {
-                            player.IsConnected = true;
-                            player.CharacterName = rxCharName.Match(message).Groups[1].Value;
-                            player.CharacterID = rxCharID.Match(message).Groups[1].Value;
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                PlayerDataGrid.Items.Add(new { SteamID = player.SteamID, CharName = player.CharacterName, CharID = player.CharacterID});
-                                PlayerDataGrid.Items.Refresh();
-                            });
-                        }
-                    }
-                }
-            }
-
-            if (messageType == Enums.MessageType.PlayerDisconnect)
-            {
-                Match match = rxSteamID.Match(message);
-                if (!String.IsNullOrWhiteSpace(match.Value))
-                {
-                    Player leavingPlayer = playerList.Find(x => (x.SteamID == match.Value));
-                    if(leavingPlayer != null)
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            playerList.Remove(leavingPlayer);
-                            PlayerDataGrid.Items.Refresh();
-                        });
-                        playerCount--;
-                        UpdatePlayerCount(playerCount);
-                    } else {
-                        // TODO: Someone disconnected, but the SteamID was not found in the player list
-                        // What do now? :(
-                    }
-                }
-            }
-
-            if (messageType == Enums.MessageType.ServerOnline)
-            {
-                //SetStatusBarText("Server Status: Online");
-                //SetServerState(Enums.ServerState.Online);
-                // TODO: Test stuff, test joining
-            }
-
-            if (messageType == Enums.MessageType.ServerExit)
-            {
-                //SetStatusBarText("Server Status: Server failed to start...");
-                //SetThemeCombination("Dark", "Orange");
-                //IsServerSetupValid();
-            }
-
-            // TODO: Fix this
-            if (messageType == Enums.MessageType.Debug)
-                return;
-
-            //AddConsoleMessage(message, messageBrush, messageWeight);
-            /*
-            this.Dispatcher.Invoke(() =>
-            {
-                Run run = new Run
-                {
-                    Text = message,
-                    Foreground = messageBrush
-                };
-
-                TextThing.Inlines.Add(run);
-                TextThing.Inlines.Add(Environment.NewLine);
-                Scrolleroni.ScrollToEnd();
-            });
-            */
         }
         #endregion
 
@@ -721,6 +708,12 @@ namespace Valheim_Server_Manager
             syncContext = SynchronizationContext.Current;
 
             IsServerSetupValid();
+
+
+            // TODO: This needs refactoring, just testing atm
+            string adminList = Path.GetFullPath(Path.Combine(saveDirectory, @"..\", "adminlist.txt"));
+            AdminListBox.LoadEntriesFromFile(adminList);
+            AdminBadge.Badge = AdminListBox.GetNumberOfEntries();
         }
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -813,6 +806,50 @@ namespace Valheim_Server_Manager
         }
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            List<Button> toggleButtons = new List<Button>() { NormalConsoleButton, NetworkConsoleButton, DebugConsoleButton, WorldGenConsoleButton, PlayerListButton, AdminButton, BannedButton, PermittedButton };
+            
+            var accentBrush = (Brush)FindResource("MahApps.Brushes.Accent");
+            var textBrush = (Brush)FindResource("MahApps.Brushes.Text");
+
+            foreach (Button button in toggleButtons)
+            {
+                if (sender == button)
+                    button.Foreground = (accentBrush != null) ? accentBrush : Brushes.Gray;
+                else
+                    button.Foreground = (textBrush != null) ? textBrush : Brushes.White;
+
+                if (sender == PlayerListButton)
+                {
+                    SetActiveConsoleWindow(Enums.ConsoleType.None);
+                    SetActiveListView(Enums.ListType.None);
+                    NewPlayerList.Visibility = Visibility.Visible;
+                } else {
+                    if (NewPlayerList.Visibility == Visibility.Visible)
+                        NewPlayerList.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            #region List Buttons
+            if (sender == AdminButton)
+            {
+                SetActiveConsoleWindow(Enums.ConsoleType.None);
+                SetActiveListView(Enums.ListType.Admin);
+            }
+
+            if (sender == BannedButton)
+            {
+                SetActiveConsoleWindow(Enums.ConsoleType.None);
+                SetActiveListView(Enums.ListType.Banned);
+            }
+
+            if (sender == PermittedButton)
+            {
+                SetActiveConsoleWindow(Enums.ConsoleType.None);
+                SetActiveListView(Enums.ListType.Permitted);
+            }
+            #endregion
+
+            #region Console Buttons
             if (sender == NormalConsoleButton)
             {
                 //NormalConsoleButton.Foreground = (Brush)FindResource("MahApps.Brushes.Accent2");
@@ -834,6 +871,7 @@ namespace Valheim_Server_Manager
                 SetActiveConsoleWindow(Enums.ConsoleType.WorldGen);
                 return;
             }
+            #endregion
 
             if (sender == ServerDirButton)
             {

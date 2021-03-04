@@ -73,17 +73,27 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ConsoleMessage.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="MessageConsole.xaml.cs">
-      <DependentUpon>MessageConsole.xaml</DependentUpon>
+    <Compile Include="Controls\SteamIDListControl.xaml.cs">
+      <DependentUpon>SteamIDListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\Enums.cs" />
+    <Compile Include="Controls\MessageConsoleControl.xaml.cs">
+      <DependentUpon>MessageConsoleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MessageParser.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="RunCustom.cs" />
-    <Compile Include="SelectableTextBlock.cs" />
-    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Controls\PlayerListControl.xaml.cs">
+      <DependentUpon>PlayerListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SelectableTextBlock.cs" />
+    <Compile Include="Utility\NativeMethods.cs" />
+    <Compile Include="Controls\FixedBadged.cs" />
     <Compile Include="ValheimManager.cs" />
     <Compile Include="ValheimServer.cs" />
+    <Page Include="Controls\SteamIDListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -96,7 +106,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MessageConsole.xaml">
+    <Page Include="Controls\MessageConsoleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PlayerListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

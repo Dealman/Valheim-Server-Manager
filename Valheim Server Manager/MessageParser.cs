@@ -17,7 +17,7 @@ namespace Valheim_Server_Manager
         // (\S\d{5,16}):(\d{1,10}) new
 
         public static string[] debugList = new string[] { "Debug", "Line:", "Gfx", "graphics device", "RearBig", "Autodesk", "only_renders", "HDR", "Calc time" };
-        public static string[] generationList = new string[] { "Placed locations", "Zonesystem", "DungeonDB", "river", "River", "mountain", "lakes", "lake"};
+        public static string[] generationList = new string[] { "Placed locations", "Zonesystem", "DungeonDB", "river", "River", "mountain", "lakes", "lake" };
         public static string[] errorList = new string[] { "Failed to find APPID", "APPID:0", "Invalid APPID", "Steam is not initialized" };
         public static string[] connectionList = new string[] { "Got session request from", "Got handshake from client", "New peer connected", "Got character ZDOID" };
         public static string[] criticalErrors = new string[] { "The password is too short", "Invalid APPID" };
@@ -42,26 +42,30 @@ namespace Valheim_Server_Manager
 
         private static Dictionary<string, string> networkMessages = new Dictionary<string, string>(){
             // TODO: Add message for version checking, test it - 02/25/2021 01:41:46: VERSION check their:0.145.6  mine:0.145.6
-            {"Got session request from", "[NETWORK]: {steamID} - is trying to connect."},
-            {"Got handshake from client", "[NETWORK]: {steamID} - received handshake."},
-            {"New peer connected", "[NETWORK]: Client successfully connected!"},
+            {"Got connection SteamID", "{steamID} - is trying to connect."},
+            {"Got handshake from client", "{steamID} - received handshake."},
+            {"New peer connected", "Client successfully connected!"},
             {"Got character ZDOID", ""}, // TODO gotta prevent 0:0 <- detect as death instead
-            {"has wrong password", "[NETWORK]: {steamID} entered the wrong password, closing connection." },
-            {"Closing socket", "[NETWORK]: {steamID} - disconnected." }
+            {"has wrong password", "{steamID} entered the wrong password, closing connection." },
+            {"Closing socket", "{steamID} - disconnected." },
+            {"Game server connected", "Game server connected" }
         };
+
+        private static string[] ignoreKeywords = new string[] { "Line:" };
+        private static string[] lowNetMessages = new string[] { "Server ID", "Authentication:", "Steam game server", "Registering lobby", "New connection", "Accepting connection", "SteamNetworking", "Connected", "VERSION check", "RPC_Disconnect", "socket", "send queue", "SteamNet"  };
 
         public static string Parse(string message, Enums.MessageType type)
         {
-            string time = DateTime.Now.ToString("hh:mm:ss");
-            string date = DateTime.Now.ToString("MM/dd/yy");
+            string time = DateTime.Now.ToString("HH:mm:ss");
+            string date = DateTime.Now.ToString("MM/dd/yyyy");
 
-            if (type == Enums.MessageType.PlayerConnect)
+            if (type == Enums.MessageType.Network)
             {
                 string newMessage = message;
 
                 foreach(KeyValuePair<string, string> entry in networkMessages)
                 {
-                    if (message.Contains(entry.Key))
+                    if (message.Contains(entry.Key) && entry.Value != "")
                     {
                         newMessage = entry.Value;
 
@@ -70,18 +74,20 @@ namespace Valheim_Server_Manager
                         {
                             Match match = rxSteamID.Match(message);
                             if (!String.IsNullOrWhiteSpace(match.Value))
+                            {
                                 newMessage = newMessage.Replace("{steamID}", match.Value);
-                            else
+                            } else {
                                 newMessage = "<<IGNORE>>";
+                            }
 
-                            break;
+                            return ($"{date} {time}: " + newMessage);
                         }
 
                         // CharID
                     }
                 }
 
-                return ($"{date} {time}: "+newMessage);
+                return newMessage;
             }
 
             return message;
@@ -89,6 +95,9 @@ namespace Valheim_Server_Manager
 
         public static Enums.MessageType CheckType(string message)
         {
+            if (ignoreKeywords.Any(x => message.Contains(x)))
+                return Enums.MessageType.None;
+
             // Most messages will be various debug messages, check those first
             if (debugList.Any(x => message.Contains(x)))
                 return Enums.MessageType.Debug;
@@ -100,6 +109,9 @@ namespace Valheim_Server_Manager
                 return Enums.MessageType.Error;
 
             if (networkMessages.Any(x => message.Contains(x.Key)))
+                return Enums.MessageType.Network;
+
+            if (lowNetMessages.Any(x => message.Contains(x)))
                 return Enums.MessageType.Network;
 
             if (worldGenArray.Any(x => message.Contains(x)))

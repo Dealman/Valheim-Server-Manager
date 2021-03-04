@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.Win32;
 using System.Windows;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Valheim_Server_Manager
 {
@@ -50,8 +51,9 @@ namespace Valheim_Server_Manager
         public delegate void ServerEventHandler(object sender, EventArgs e);
         public static event ServerEventHandler OnServerEvent;
 
-        static readonly string serverAppID = "896660"; // Use 892970, other to test failure to start
+        static readonly string serverAppID = "892970"; // Use 892970, other to test failure to start
         static ServerSettings currentSettings;
+        static Regex rxSteamID = new Regex(@"(\d{17})", RegexOptions.Compiled);
 
         public static bool ValidatePath(string path)
         {
@@ -253,6 +255,45 @@ namespace Valheim_Server_Manager
             // Weren't able to get the hidden window, kill process? Is it safe? World save? IronGate pls...
             currentSettings.ServerProcess.CloseMainWindow();
             currentSettings.ServerProcess.Kill();
+        }
+
+
+        public static Tuple<bool, List<string>> ValidateAdminList(string path)
+        {
+            if (File.Exists(path))
+            {
+                var lines = File.ReadLines(path);
+
+                if(lines.Count() > 0)
+                {
+                    List<string> idList = new List<string>();
+
+                    foreach(var line in lines)
+                    {
+                        if (String.IsNullOrWhiteSpace(line))
+                            continue;
+
+                        if (line.Substring(0,2) == "//")
+                        {
+                            // Line's a commented, assume this is omitted by Valheim
+                            // If necessary, can use Regex here - spaces would trigger this check
+                        } else {
+                            // Not a commented line, let's check it for a SteamID
+                            var match = rxSteamID.Match(line);
+
+                            // Not a match, so we assume the line is invalid
+                            if (!match.Success)
+                                return Tuple.Create(false, new List<string>());// false;
+
+                            idList.Add(match.Value);
+                        }
+                    }
+
+                    return Tuple.Create(true, idList);
+                }
+            }
+
+            return Tuple.Create(false, new List<string>());
         }
     }
 }

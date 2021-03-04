@@ -14,6 +14,7 @@ namespace Valheim_Server_Manager
         public bool RequestReceived { get; set; }
         public bool HandshakeReceived { get; set; }
         public bool IsConnected { get; set; }
+        public DateTime JoinTime { get; set; }
 
         public Player(string steamID)
         {
