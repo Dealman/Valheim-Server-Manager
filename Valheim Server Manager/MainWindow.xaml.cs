@@ -292,6 +292,7 @@ namespace Valheim_Server_Manager
                     break;
             }
 
+            /*
             this.Dispatcher.Invoke(() =>
             {
                 Run run = new Run
@@ -306,6 +307,7 @@ namespace Valheim_Server_Manager
                 Scrolleroni.ScrollToEnd();
                 IncrementBadge(type);
             });
+            */
         }
         private void ClearBadgeForButton(Button button)
         {
@@ -551,6 +553,10 @@ namespace Valheim_Server_Manager
                 }
             }
         }
+        private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DummyTab.Width = this.ActualWidth - 542 - 5; // Sum of tabs, minus an extra 5 for margin, nasty way of doing this but eh, it works
+        }
         #endregion
 
         #region Control Event Handlers
@@ -772,6 +778,7 @@ namespace Valheim_Server_Manager
         #endregion
 
         #region ContextMenu Event Handlers
+        /*
         private void tContextMenu_Opened(object sender, RoutedEventArgs e)
         {
             if (!String.IsNullOrWhiteSpace(TextThing.Text))
@@ -803,6 +810,7 @@ namespace Valheim_Server_Manager
             if (sender == tContextClear)
                 TextThing.Clear();
         }
+        */
         #endregion
 
         #region Keybindings
@@ -813,12 +821,14 @@ namespace Valheim_Server_Manager
             switch (e.Key)
             {
                 // Copy Text
+                /*
                 case Key.C:
                     if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
                     {
                         TextThing.CopyToClipboard();
                     }
                     break;
+                */
                 // Reset window location
                 case Key.R:
                     if (e.KeyboardDevice.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
@@ -891,5 +901,10 @@ namespace Valheim_Server_Manager
             return true;
         }
         #endregion
+
+        private void UpdateCheck_Click(object sender, RoutedEventArgs e)
+        {
+            ClickOnceManager.CheckForUpdate();
+        }
     }
 }

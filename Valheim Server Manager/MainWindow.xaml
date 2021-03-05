@@ -7,7 +7,7 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:local="clr-namespace:Valheim_Server_Manager"
         mc:Ignorable="d"
-        Title="Valheim Server Manager" TitleCharacterCasing="Normal" ContentRendered="MetroWindow_ContentRendered" Closing="MetroWindow_Closing" ResizeMode="CanResizeWithGrip" MinWidth="768" MinHeight="432" SizeToContent="WidthAndHeight" KeyUp="MW_KeyUp" Width="768">
+        Title="Valheim Server Manager" TitleCharacterCasing="Normal" ContentRendered="MetroWindow_ContentRendered" Closing="MetroWindow_Closing" ResizeMode="CanResizeWithGrip" MinWidth="768" MinHeight="432" SizeToContent="WidthAndHeight" KeyUp="MW_KeyUp" Width="768" SizeChanged="MetroWindow_SizeChanged">
     <Window.Resources>
         <Style x:Key="NormalColumnHeader" 
                BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}" 
@@ -29,24 +29,8 @@
     </Window.Resources>
     <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
         <TabControl Margin="0,0,0,30">
-            <TabItem Header="Main" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0">
-                <Grid x:Name="MainGrid" HorizontalAlignment="Stretch">
-                    <Border x:Name="FakeConsole" BorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" BorderThickness="1" Margin="10,250,10,74" Focusable="True" Visibility="Collapsed">
-                        <Grid>
-                            <ScrollViewer x:Name="Scrolleroni" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualHeight}" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualWidth}" CanContentScroll="True">
-                                <local:SelectableTextBlock x:Name="TextThing" Padding="2,2,0,0" TextWrapping="WrapWithOverflow" Visibility="Visible">
-                                    <local:SelectableTextBlock.ContextMenu>
-                                        <ContextMenu x:Name="tContextMenu" Opened="tContextMenu_Opened">
-                                            <MenuItem x:Name="tContextSelect" Header="Select All" IsEnabled="False" Click="tContextItem_Click"/>
-                                            <MenuItem x:Name="tContextCopy" Header="Copy Selected Text" IsEnabled="False" Click="tContextItem_Click"/>
-                                            <Separator/>
-                                            <MenuItem x:Name="tContextClear" Header="Clear" IsEnabled="False"  Click="tContextItem_Click"/>
-                                        </ContextMenu>
-                                    </local:SelectableTextBlock.ContextMenu>
-                                </local:SelectableTextBlock>
-                            </ScrollViewer>
-                        </Grid>
-                    </Border>
+            <TabItem x:Name="MainTab" Header="Main" >
+                <Grid x:Name="MainGrid" HorizontalAlignment="Stretch" Margin="-3,0">
                     <DockPanel>
                         <DockPanel Margin="10,5" LastChildFill="False" DockPanel.Dock="Top">
                             <!-- Output Consoles -->
@@ -84,7 +68,7 @@
                     </DockPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Server Config" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0">
+            <TabItem Header="Server Config" >
                 <Grid x:Name="SettingsGrid" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                     <Label Content="Server Directory" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="ServerDirTextBox" Margin="10,41,65,0" TextWrapping="Wrap" VerticalAlignment="Top" ToolTip="Folder containing the valheim_server.exe file" mah:TextBoxHelper.Watermark="Example; C:/Program Files (x86)/Steam/steamapps/common/Valheim dedicated server" IsReadOnly="True" MinHeight="27" Focusable="False"/>
@@ -110,7 +94,7 @@
                     <Button x:Name="SaveDirButton" Content="Browse" HorizontalAlignment="Right" Margin="694,103,10,0" VerticalAlignment="Top" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" MinWidth="50" IsTabStop="False"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Backups" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0">
+            <TabItem Header="Backups" >
                 <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}"/>
             </TabItem>
             <TabItem Header="Settings">
@@ -159,13 +143,30 @@
                     <!--</StackPanel>-->
                 </Grid>
             </TabItem>
+            <TabItem x:Name="DummyTab" Header="" Visibility="Hidden" Width="216"/>
+            <TabItem Header="About">
+                <Grid>
+                    <!--<DockPanel LastChildFill="False" Margin="10" VerticalAlignment="Top">-->
+                        <Grid Background="{DynamicResource MahApps.Brushes.Accent2}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="74" Height="74" Margin="10,10,0,0">
+                            <fa:ImageAwesome Icon="Vcard" Foreground="White" Width="64" Height="64"/>
+                        </Grid>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="89,22,0,0">
+                        <Label Content="Valheim Server Manager" DockPanel.Dock="Left" VerticalAlignment="Top" FontSize="14.0" Margin="0" HorizontalAlignment="Left" Padding="0"/>
+                        <TextBlock Text="Version 1.0.0.0" VerticalAlignment="Top" FontSize="10.0" HorizontalAlignment="Left" Margin="0" Width="160" TextAlignment="Center" FontStyle="Italic" Foreground="{DynamicResource MahApps.Brushes.Gray4}"/>
+                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0" Width="150" TextAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.SystemControlHyperlinkText}">
+                            <Hyperlink Click="UpdateCheck_Click">Check for Updates</Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                    <!--</DockPanel>-->
+                </Grid>
+            </TabItem>
         </TabControl>
-        <StatusBar x:Name="StatusBar1" Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,354,0,0" VerticalAlignment="Bottom" Focusable="False" MinHeight="30" MaxHeight="30">
-            <DockPanel HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualWidth}" Margin="0">
-                <fa:ImageAwesome x:Name="ServerStateIcon" Icon="Cog" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Left" SpinDuration="3"/>
-                <Label x:Name="PlayerCountLabel" HorizontalAlignment="Right" Content="0/10" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,0,20,0"/>
+        <StatusBar x:Name="StatusBar1" Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,354,0,0" VerticalAlignment="Bottom" Focusable="False" MinHeight="30" MaxHeight="30" MaxWidth="{Binding ElementName=MainGrid, Path=ActualWidth}" Padding="0">
+            <DockPanel HorizontalAlignment="Stretch"  Margin="0" Width="{Binding ElementName=StatusBar1,Path=ActualWidth}">
+                <fa:ImageAwesome x:Name="ServerStateIcon" Icon="Cog" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Left" SpinDuration="3" DockPanel.Dock="Left"/>
+                <Label x:Name="PlayerCountLabel" HorizontalAlignment="Right" Content="0/10" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,0,10,0"/>
                 <fa:ImageAwesome Icon="Users" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
-                <Label x:Name="CurrentStatusLabel" HorizontalAlignment="Stretch" Content="Server Status: Ready Starting" Padding="5,0" VerticalContentAlignment="Center"/>
+                <Label x:Name="CurrentStatusLabel" HorizontalAlignment="Stretch" Content="Server Status: Ready Starting" Padding="5,0" VerticalContentAlignment="Center" DockPanel.Dock="Left"/>
             </DockPanel>
         </StatusBar>
     </Grid>
