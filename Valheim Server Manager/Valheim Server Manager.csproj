@@ -15,7 +15,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>E:\Development\VS\Valheim Server Manager\Deployment\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -25,13 +25,16 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>https://raw.githubusercontent.com/Dealman/Valheim-Server-Manager/master/docs/Installer/</InstallUrl>
+    <InstallUrl>https://raw.githubusercontent.com/Dealman/Valheim-Server-Manager/master/Installer/</InstallUrl>
+    <SupportUrl>https://github.com/Dealman/Valheim-Server-Manager</SupportUrl>
+    <ErrorReportUrl>https://github.com/Dealman/Valheim-Server-Manager</ErrorReportUrl>
     <TargetCulture>en-150</TargetCulture>
     <ProductName>Valheim Server Manager</ProductName>
     <PublisherName>Dealman</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>4</ApplicationRevision>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>0.2.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
