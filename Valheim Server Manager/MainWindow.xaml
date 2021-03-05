@@ -29,7 +29,7 @@
     </Window.Resources>
     <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
         <TabControl Margin="0,0,0,30">
-            <TabItem Header="Main">
+            <TabItem Header="Main" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0">
                 <Grid x:Name="MainGrid" HorizontalAlignment="Stretch">
                     <Border x:Name="FakeConsole" BorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" BorderThickness="1" Margin="10,250,10,74" Focusable="True" Visibility="Collapsed">
                         <Grid>
@@ -66,12 +66,12 @@
                             <mah:Badged x:Name="PermitBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Badge="{Binding Path=ListCount}" DataContext="{StaticResource PermitList}" DockPanel.Dock="Right">
                                 <Button x:Name="PermittedButton" Content="Permitted" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                             </mah:Badged>
-                            <local:FixedBadged x:Name="AdminBadge" BadgePlacementMode="TopRight" ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Badge="{Binding Path=ListCount}" DataContext="{StaticResource AdminList}" DockPanel.Dock="Right">
+                            <mah:Badged x:Name="AdminBadge" BadgePlacementMode="TopRight" ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Badge="{Binding Path=ListCount}" DataContext="{StaticResource AdminList}" DockPanel.Dock="Right">
                                 <Button x:Name="AdminButton" Content="Admins" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
-                            </local:FixedBadged>
-                            <local:FixedBadged x:Name="PlayerCountBadge" BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Right">
+                            </mah:Badged>
+                            <mah:Badged x:Name="PlayerCountBadge" BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Right">
                                 <Button x:Name="PlayerListButton" Content="Player List" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click" Padding="5"/>
-                            </local:FixedBadged>
+                            </mah:Badged>
                         </DockPanel>
                         <DockPanel Margin="10,0,10,10" MinHeight="200" DockPanel.Dock="Top">
                             <Button x:Name="StartButton" Content="Start Server" Margin="0,5,0,0" VerticalAlignment="Bottom" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" DockPanel.Dock="Bottom"/>
@@ -84,7 +84,7 @@
                     </DockPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Server Settings">
+            <TabItem Header="Server Config" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0">
                 <Grid x:Name="SettingsGrid" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                     <Label Content="Server Directory" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="ServerDirTextBox" Margin="10,41,65,0" TextWrapping="Wrap" VerticalAlignment="Top" ToolTip="Folder containing the valheim_server.exe file" mah:TextBoxHelper.Watermark="Example; C:/Program Files (x86)/Steam/steamapps/common/Valheim dedicated server" IsReadOnly="True" MinHeight="27" Focusable="False"/>
@@ -108,6 +108,55 @@
                     <Label Content="Save Directory" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="SaveDirTextBox" Margin="10,103,65,0" TextWrapping="Wrap" VerticalAlignment="Top" mah:TextBoxHelper.Watermark="Example; C:/Valheim_Worlds" ToolTip="Folder where saved worlds are located or where they should be saved" IsReadOnly="True" TextChanged="TextBox_TextChanged" MinHeight="27" Focusable="False"/>
                     <Button x:Name="SaveDirButton" Content="Browse" HorizontalAlignment="Right" Margin="694,103,10,0" VerticalAlignment="Top" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" MinWidth="50" IsTabStop="False"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Backups" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0">
+                <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}"/>
+            </TabItem>
+            <TabItem Header="Settings">
+                <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!--<StackPanel Orientation="Vertical">-->
+                    <GroupBox Header="Updates" mah:ControlsHelper.ContentCharacterCasing="Normal" Margin="0,0,5,0" Grid.Row="0" Grid.Column="0">
+                        <Grid>
+                            <CheckBox x:Name="ServerUpdatesCheckBox" Content="Check for Updates" Margin="1,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <Label Content="SteamCMD Installed: False&#x0a;Current Build: 6315977&#x0a;Latest Build:   6315977" HorizontalAlignment="Left" Margin="200,59,0,0" VerticalAlignment="Top" FontStyle="Italic" Foreground="{DynamicResource MahApps.Brushes.Gray}"/>
+                            <CheckBox Content="Before Startup" Margin="10,23,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="{Binding ElementName=ServerUpdatesCheckBox, Path=IsChecked}"/>
+                            <CheckBox Content="On Timer (Minutes)" Margin="10,46,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="{Binding ElementName=ServerUpdatesCheckBox, Path=IsChecked}"/>
+                            <mah:NumericUpDown Value="30" Minimum="5" Maximum="720" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,69,0,0" IsEnabled="{Binding ElementName=ServerUpdatesCheckBox, Path=IsChecked}"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Restarts" mah:ControlsHelper.ContentCharacterCasing="Normal" Margin="5,0,0,0" Grid.Row="0" Grid.Column="1">
+                        <Grid>
+                            <CheckBox Content="Automatic Restarts" Margin="1,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <CheckBox Content="Update Available" Margin="10,23,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <CheckBox Content="On Timer (Minutes)" Margin="10,46,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <mah:NumericUpDown Value="30" Minimum="5" Maximum="720" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,69,0,0" NumericInputMode="Numbers"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Miscellaneous" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,5" mah:ControlsHelper.ContentCharacterCasing="Normal">
+                        <Grid>
+                            <CheckBox Content="Dark Mode" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <CheckBox Content="Disable Automatic Theme" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,23,0,0"/>
+                            <TextBlock Text="Theme:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,46,0,0" Width="114" TextAlignment="Center"/>
+                            <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,67,0,0" Width="114">
+                                <ComboBoxItem Content="Blue" IsSelected="True"/>
+                                <ComboBoxItem Content="Red"/>
+                                <ComboBoxItem Content="Green"/>
+                                <ComboBoxItem Content="Teal"/>
+                                <ComboBoxItem Content="Amber"/>
+                                <ComboBoxItem Content="Indigo"/>
+                            </ComboBox>
+                        </Grid>
+                    </GroupBox>
+                    <!--</StackPanel>-->
                 </Grid>
             </TabItem>
         </TabControl>

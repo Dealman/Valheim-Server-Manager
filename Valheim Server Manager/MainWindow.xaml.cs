@@ -30,15 +30,15 @@ namespace Valheim_Server_Manager
         private int playerCount;
         private string selectedWorld;
         private SynchronizationContext syncContext;
-        private Process serverProcess;
-        private Enums.DebugLevel debugLevel = Enums.DebugLevel.Low;
-        private Enums.ServerState serverState = Enums.ServerState.Invalid;
+        private Process serverProcess = null;
+        //private Enums.DebugLevel debugLevel = Enums.DebugLevel.Low;
+        //private Enums.ServerState serverState = Enums.ServerState.Invalid;
         private List<Player> playerList = new List<Player>();
         private Regex rxSteamID = new Regex(@"(\d{17})", RegexOptions.Compiled);
         private Regex rxCharName = new Regex(@"from\s(.+)\s:", (RegexOptions.Compiled | RegexOptions.IgnoreCase));
         private Regex rxCharID = new Regex(@"(\S\d{5,16}):1", RegexOptions.Compiled); // Not sure how long the CharID can be, so setting a range of 5 to 16
         private Enums.ConsoleType currentConsole = Enums.ConsoleType.Network;
-        private Enums.ListType currentList = Enums.ListType.None;
+        //private Enums.ListType currentList = Enums.ListType.None;
 
         #region Resource Definitions
         private MessageConsole networkConsole;
@@ -546,6 +546,7 @@ namespace Valheim_Server_Manager
                         }
                     }
                 } catch (Exception ex) {
+                    MessageBox.Show($"An error occurred when trying to stop the server process!\n\nMessage:{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     //this.Close();
                 }
             }

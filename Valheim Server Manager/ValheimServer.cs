@@ -10,9 +10,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Valheim_Server_Manager
-{
-    // TODO: Move all server related actions in here
-    public static class ValheimServer
+{    public static class ValheimServer
     {
         public struct ServerSettings
         {
