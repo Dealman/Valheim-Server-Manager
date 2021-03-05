@@ -47,9 +47,6 @@
                             </ScrollViewer>
                         </Grid>
                     </Border>
-                    <!--<TextBox Margin="10,0,50,42" TextWrapping="Wrap" VerticalAlignment="Bottom" MinHeight="27" mah:TextBoxHelper.Watermark="Send a command..." IsEnabled="False" ToolTip="At the moment, it's not possible to send commands to the server" ToolTipService.ShowOnDisabled="True"/>
-                    <Button x:Name="SendMessageB" Content="Send" Margin="0,0,10,42" VerticalAlignment="Bottom" MinHeight="27" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Right" ToolTip="At the moment, it's not possible to send commands to the server" IsEnabled="False" ToolTipService.ShowOnDisabled="True"/>-->
-                    <!--<Button x:Name="StartButton" Content="Start Server" Margin="277,0,10,10" VerticalAlignment="Bottom" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal"/>-->
                     <DockPanel>
                         <DockPanel Margin="10" LastChildFill="False" DockPanel.Dock="Top">
                             <!-- Output Consoles -->
@@ -85,14 +82,6 @@
                             <mah:TransitioningContentControl x:Name="LeTransit" Transition="Right" Margin="0" Content="{StaticResource NetworkConsole}" DockPanel.Dock="Top"/>
                         </DockPanel>
                     </DockPanel>
-                    <!--<local:MessageConsole x:Name="NormalOutputConsole" Type="Normal" Margin="10,39,10,74" Title="Output Console (Normal)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
-                    <!--<local:MessageConsole x:Name="NetworkOutputConsole" Type="Network" Margin="10,39,10,74" Title="Output Console (Network)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
-                    <!--<local:MessageConsole x:Name="DebugOutputConsole" Type="Debug"  Margin="10,39,10,74" Title="Output Console (Debug)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
-                    <!--<local:MessageConsole x:Name="WorldGenOutputConsole" Type="WorldGen"  Margin="10,39,10,74" Title="Output Console (WorldGen)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
-                    <!--<local:CustomListDisplay x:Name="AdminListBox" Margin="10,40,10,74" Title="List of Admins" Type="Admin" Visibility="Collapsed"/>
-                    <local:CustomListDisplay x:Name="BanListBox" Margin="10,40,10,74" Title="List of Banned Players" Type="Banned" Visibility="Collapsed"/>
-                    <local:CustomListDisplay x:Name="PermitListBox" Margin="10,40,10,74" Title="List of Permitted Players" Type="Permitted" Visibility="Collapsed"/>
-                    <local:PlayerListControl x:Name="NewPlayerList" Margin="10,40,10,74" Visibility="Collapsed"/>-->
                 </Grid>
             </TabItem>
             <TabItem Header="Server Settings">
@@ -121,25 +110,6 @@
                     <Button x:Name="SaveDirButton" Content="Browse" HorizontalAlignment="Right" Margin="694,103,10,0" VerticalAlignment="Top" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" MinWidth="50" IsTabStop="False"/>
                 </Grid>
             </TabItem>
-            <!--
-            <TabItem Header="Player List">
-                <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
-                    <DataGrid x:Name="PlayerDataGrid" Height="306" Margin="10" Width="734" AutoGenerateColumns="True" ColumnHeaderStyle="{StaticResource NormalColumnHeader}">
-                        <DataGrid.Columns>
-                            <DataGridHyperlinkColumn Header="SteamID" Binding="{Binding Path=SteamID}" Width="Auto">
-                                <DataGridHyperlinkColumn.ElementStyle>
-                                    <Style>
-                                        <EventSetter Event="Hyperlink.Click" Handler="Hyperlink_Click"/>
-                                    </Style>
-                                </DataGridHyperlinkColumn.ElementStyle>
-                            </DataGridHyperlinkColumn>
-                            <DataGridTextColumn Header="Character Name" Binding="{Binding Path=CharName}" Width="Auto" ElementStyle="{StaticResource CenteredColumnText}"/>
-                            <DataGridTextColumn Header="Character ID" Binding="{Binding Path=CharID}" Width="Auto" ElementStyle="{StaticResource CenteredColumnText}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
-            -->
         </TabControl>
         <StatusBar x:Name="StatusBar1" Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,354,0,0" VerticalAlignment="Bottom" Focusable="False" MinHeight="30" MaxHeight="30">
             <DockPanel HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualWidth}" Margin="0">
