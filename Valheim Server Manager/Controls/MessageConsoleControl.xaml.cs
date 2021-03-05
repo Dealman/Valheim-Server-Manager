@@ -58,8 +58,18 @@ namespace Valheim_Server_Manager
 
         private void Border_KeyDown(object sender, KeyEventArgs e)
         {
-            // TODO:
-            // CTRL+A, CTRL+C
+            switch (e.Key)
+            {
+                case Key.C:
+                    if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+                        MessageContainer.CopyToClipboard();
+                    break;
+
+                case Key.A:
+                    if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+                        MessageContainer.SelectAll();
+                    break;
+            }
         }
     }
 }

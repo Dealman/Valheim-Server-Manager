@@ -23,132 +23,6 @@ using FontAwesome.WPF;
 
 namespace Valheim_Server_Manager
 {
-    internal class DispatcherWinFormsCompatAdapter : ISynchronizeInvoke
-    {
-        #region IAsyncResult implementation
-        private class DispatcherAsyncResultAdapter : IAsyncResult
-        {
-            private DispatcherOperation m_op;
-            private object m_state;
-
-            public DispatcherAsyncResultAdapter(DispatcherOperation operation)
-            {
-                m_op = operation;
-            }
-
-            public DispatcherAsyncResultAdapter(DispatcherOperation operation, object state)
-               : this(operation)
-            {
-                m_state = state;
-            }
-
-            public DispatcherOperation Operation
-            {
-                get { return m_op; }
-            }
-
-            #region IAsyncResult Members
-
-            public object AsyncState
-            {
-                get { return m_state; }
-            }
-
-            public WaitHandle AsyncWaitHandle
-            {
-                get { return null; }
-            }
-
-            public bool CompletedSynchronously
-            {
-                get { return false; }
-            }
-
-            public bool IsCompleted
-            {
-                get { return m_op.Status == DispatcherOperationStatus.Completed; }
-            }
-
-            #endregion
-        }
-        #endregion
-        private Dispatcher m_disp;
-        public DispatcherWinFormsCompatAdapter(Dispatcher dispatcher)
-        {
-            m_disp = dispatcher;
-        }
-        #region ISynchronizeInvoke Members
-
-        public IAsyncResult BeginInvoke(Delegate method, object[] args)
-        {
-            if (args != null && args.Length > 1)
-            {
-                object[] argsSansFirst = GetArgsAfterFirst(args);
-                DispatcherOperation op = m_disp.BeginInvoke(DispatcherPriority.Normal, method, args[0], argsSansFirst);
-                return new DispatcherAsyncResultAdapter(op);
-            }
-            else
-            {
-                if (args != null)
-                {
-                    return new DispatcherAsyncResultAdapter(m_disp.BeginInvoke(DispatcherPriority.Normal, method, args[0]));
-                }
-                else
-                {
-                    return new DispatcherAsyncResultAdapter(m_disp.BeginInvoke(DispatcherPriority.Normal, method));
-                }
-            }
-        }
-
-        private static object[] GetArgsAfterFirst(object[] args)
-        {
-            object[] result = new object[args.Length - 1];
-            Array.Copy(args, 1, result, 0, args.Length - 1);
-            return result;
-        }
-
-        public object EndInvoke(IAsyncResult result)
-        {
-            DispatcherAsyncResultAdapter res = result as DispatcherAsyncResultAdapter;
-            if (res == null)
-                throw new InvalidCastException();
-
-            while (res.Operation.Status != DispatcherOperationStatus.Completed || res.Operation.Status == DispatcherOperationStatus.Aborted)
-            {
-                Thread.Sleep(50);
-            }
-
-            return res.Operation.Result;
-        }
-
-        public object Invoke(Delegate method, object[] args)
-        {
-            if (args != null && args.Length > 1)
-            {
-                object[] argsSansFirst = GetArgsAfterFirst(args);
-                return m_disp.Invoke(DispatcherPriority.Normal, method, args[0], argsSansFirst);
-            }
-            else
-            {
-                if (args != null)
-                {
-                    return m_disp.Invoke(DispatcherPriority.Normal, method, args[0]);
-                }
-                else
-                {
-                    return m_disp.Invoke(DispatcherPriority.Normal, method);
-                }
-            }
-        }
-
-        public bool InvokeRequired
-        {
-            get { return m_disp.Thread != Thread.CurrentThread; }
-        }
-
-        #endregion
-    }
-
     public partial class MainWindow : MetroWindow
     {
         private string workingDirectory;
@@ -166,15 +40,27 @@ namespace Valheim_Server_Manager
         private Enums.ConsoleType currentConsole = Enums.ConsoleType.Network;
         private Enums.ListType currentList = Enums.ListType.None;
 
+        #region Resource Definitions
+        private MessageConsole networkConsole;
+        private MessageConsole debugConsole;
+        private MessageConsole worldConsole;
+        private PlayerListControl playerView;
+        private CustomListDisplay adminView;
+        private CustomListDisplay permittedView;
+        private CustomListDisplay bannedView;
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // TODO: Move to Loaded/ContentRendered
-            ValheimServer.OnServerStarted += ValheimServer_OnServerStarted;
-            ValheimServer.OnServerStopped += ValheimServer_OnServerStopped;
-            ValheimServer.OnOutputReceived += ValheimServer_OnOutputReceived;
-            ValheimServer.OnServerStateChanged += ValheimServer_OnServerStateChanged;
+            networkConsole = (MessageConsole)FindResource("NetworkConsole");
+            debugConsole = (MessageConsole)FindResource("DebugConsole");
+            worldConsole = (MessageConsole)FindResource("WorldGenConsole");
+            playerView = (PlayerListControl)FindResource("NewPlayerList"); // TODO: Rename
+            adminView = (CustomListDisplay)FindResource("AdminList");
+            permittedView = (CustomListDisplay)FindResource("PermitList");
+            bannedView = (CustomListDisplay)FindResource("BanList");
         }
 
         private void ValheimServer_OnServerStateChanged(object sender, ValheimServer.StateChangedArgs e)
@@ -299,7 +185,8 @@ namespace Valheim_Server_Manager
 
                         this.Dispatcher.Invoke(() =>
                         {
-                            NewPlayerList.AddPlayer(player);
+                            playerView.AddPlayer(player);
+                            //NewPlayerList.AddPlayer(player);
                         });
                     }
                 }
@@ -315,7 +202,8 @@ namespace Valheim_Server_Manager
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            NewPlayerList.RemovePlayer(leavingPlayer);
+                            playerView.RemovePlayer(leavingPlayer);
+                            //NewPlayerList.RemovePlayer(leavingPlayer);
                         });
 
                         if (playerCount > 0)
@@ -386,15 +274,21 @@ namespace Valheim_Server_Manager
             switch (type)
             {
                 case Enums.MessageType.Network:
-                    NetworkOutputConsole.AddMessage(msg);
+                    var n = FindResource("NetworkConsole") as MessageConsole;
+                    n.AddMessage(msg);
+                    //NetworkOutputConsole.AddMessage(msg);
                     break;
 
                 case Enums.MessageType.Debug:
-                    DebugOutputConsole.AddMessage(msg);
+                    var d = FindResource("DebugConsole") as MessageConsole;
+                    d.AddMessage(msg);
+                    //DebugOutputConsole.AddMessage(msg);
                     break;
 
                 case Enums.MessageType.WorldGen:
-                    WorldGenOutputConsole.AddMessage(msg);
+                    var w = FindResource("WorldGenConsole") as MessageConsole;
+                    w.AddMessage(msg);
+                    //WorldGenOutputConsole.AddMessage(msg);
                     break;
             }
 
@@ -413,67 +307,6 @@ namespace Valheim_Server_Manager
                 IncrementBadge(type);
             });
         }
-        private void SetActiveListView(Enums.ListType lType)
-        {
-            if (lType == currentList)
-                return;
-
-            List<CustomListDisplay> displayList = new List<CustomListDisplay>() { AdminListBox, BanListBox, PermitListBox };
-
-            if (lType == Enums.ListType.None)
-            {
-                displayList.ForEach(x => x.Visibility = Visibility.Collapsed);
-            }
-
-            foreach(CustomListDisplay display in displayList)
-            {
-                if (display.Type == lType)
-                    display.Visibility = Visibility.Visible;
-                else
-                    display.Visibility = Visibility.Collapsed;
-            }
-        }
-        private void SetActiveConsoleWindow(Enums.ConsoleType cType)
-        {
-            if (cType == currentConsole)
-                return;
-
-            List<MessageConsole> consoleList = new List<MessageConsole>() { NetworkOutputConsole, DebugOutputConsole, WorldGenOutputConsole };
-
-            if (cType == Enums.ConsoleType.None)
-            {
-                consoleList.ForEach(x => x.Visibility = Visibility.Collapsed);
-                return;
-            }
-
-            foreach (MessageConsole console in consoleList)
-            {
-                if (console.Type == cType)
-                    console.Visibility = Visibility.Visible;
-                else
-                    console.Visibility = Visibility.Collapsed;
-            }
-
-            var accentBrush = (Brush)FindResource("MahApps.Brushes.Accent");
-            var textBrush = (Brush)FindResource("MahApps.Brushes.Text");
-            if (accentBrush == null || textBrush == null)
-                return;
-
-            switch (cType)
-            {
-                case Enums.ConsoleType.Network:
-                    ClearBadgeForButton(NetworkConsoleButton);
-                    break;
-                case Enums.ConsoleType.Debug:
-                    currentConsole = Enums.ConsoleType.Debug;
-                    ClearBadgeForButton(DebugConsoleButton);
-                    break;
-                case Enums.ConsoleType.WorldGen:
-                    currentConsole = Enums.ConsoleType.WorldGen;
-                    ClearBadgeForButton(WorldGenConsoleButton);
-                    break;
-            }
-        }
         private void ClearBadgeForButton(Button button)
         {
             if (button == NetworkConsoleButton)
@@ -490,15 +323,15 @@ namespace Valheim_Server_Manager
             switch (mType)
             {
                 case Enums.MessageType.Network:
-                    if (NetworkOutputConsole.Visibility == Visibility.Collapsed)
+                    if (currentConsole != Enums.ConsoleType.Network)
                         NetworkBadge.Badge = (NetworkBadge.Badge == null ? 1 : ((int)NetworkBadge.Badge + 1));
                     return;
                 case Enums.MessageType.Debug:
-                    if (DebugOutputConsole.Visibility == Visibility.Collapsed)
+                    if (currentConsole != Enums.ConsoleType.Debug)
                         DebugBadge.Badge = (DebugBadge.Badge == null ? 1 : ((int)DebugBadge.Badge + 1));
                     return;
                 case Enums.MessageType.WorldGen:
-                    if (WorldGenOutputConsole.Visibility == Visibility.Collapsed)
+                    if (currentConsole != Enums.ConsoleType.WorldGen)
                         WorldGenBadge.Badge = (WorldGenBadge.Badge == null ? 1 : ((int)WorldGenBadge.Badge + 1));
                     return;
             }
@@ -643,10 +476,15 @@ namespace Valheim_Server_Manager
 
             IsServerSetupValid();
 
-            // TODO: This needs refactoring, just testing atm
-            AdminListBox.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Admin));
-            PermitListBox.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Permitted));
-            BanListBox.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Banned));
+            // TODO: Verify path before doing this
+            adminView.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Admin));
+            permittedView.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Permitted));
+            bannedView.LoadEntriesFromFile(ValheimManager.GetListPath(Enums.ListType.Banned));
+
+            ValheimServer.OnServerStarted += ValheimServer_OnServerStarted;
+            ValheimServer.OnServerStopped += ValheimServer_OnServerStopped;
+            ValheimServer.OnOutputReceived += ValheimServer_OnOutputReceived;
+            ValheimServer.OnServerStateChanged += ValheimServer_OnServerStateChanged;
         }
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -739,63 +577,69 @@ namespace Valheim_Server_Manager
         }
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            List<Button> toggleButtons = new List<Button>() { NetworkConsoleButton, DebugConsoleButton, WorldGenConsoleButton, PlayerListButton, AdminButton, BannedButton, PermittedButton };
-            
-            var accentBrush = (Brush)FindResource("MahApps.Brushes.Accent");
-            var textBrush = (Brush)FindResource("MahApps.Brushes.Text");
+            #region Console/List Button Styling
+            List<Button> toggleButtons = new List<Button>() { NetworkConsoleButton, DebugConsoleButton, WorldGenConsoleButton, PlayerListButton, AdminButton, PermittedButton, BannedButton };
 
-            foreach (Button button in toggleButtons)
+            if (toggleButtons.Contains(sender))
             {
-                if (sender == button)
-                    button.Foreground = (accentBrush != null) ? accentBrush : Brushes.Gray;
-                else
-                    button.Foreground = (textBrush != null) ? textBrush : Brushes.White;
+                var accentBrush = (Brush)FindResource("MahApps.Brushes.Accent");
+                var textBrush = (Brush)FindResource("MahApps.Brushes.Text");
 
-                if (sender == PlayerListButton)
+                foreach(Button button in toggleButtons)
                 {
-                    SetActiveConsoleWindow(Enums.ConsoleType.None);
-                    SetActiveListView(Enums.ListType.None);
-                    NewPlayerList.Visibility = Visibility.Visible;
-                } else {
-                    if (NewPlayerList.Visibility == Visibility.Visible)
-                        NewPlayerList.Visibility = Visibility.Collapsed;
+                    if (sender == button)
+                    {
+                        button.Foreground = accentBrush;
+                        button.BorderBrush = accentBrush;
+                        button.BorderThickness = new Thickness(1);
+                    } else {
+                        button.Foreground = textBrush;
+                        button.BorderBrush = null;
+                        button.BorderThickness = new Thickness(0);
+                    }
                 }
             }
+            #endregion
 
             #region List Buttons
             if (sender == AdminButton)
             {
-                SetActiveConsoleWindow(Enums.ConsoleType.None);
-                SetActiveListView(Enums.ListType.Admin);
+                LeTransit.Content = adminView;
             }
-
-            if (sender == BannedButton)
-            {
-                SetActiveConsoleWindow(Enums.ConsoleType.None);
-                SetActiveListView(Enums.ListType.Banned);
-            }
-
             if (sender == PermittedButton)
             {
-                SetActiveConsoleWindow(Enums.ConsoleType.None);
-                SetActiveListView(Enums.ListType.Permitted);
+                LeTransit.Content = permittedView;
+            }
+            if (sender == BannedButton)
+            {
+                LeTransit.Content = bannedView;
+            }
+            if (sender == PlayerListButton)
+            {
+                LeTransit.Content = playerView;
             }
             #endregion
 
             #region Console Buttons
             if (sender == NetworkConsoleButton)
             {
-                SetActiveConsoleWindow(Enums.ConsoleType.Network);
+                LeTransit.Content = networkConsole;
+                currentConsole = Enums.ConsoleType.Network;
+                ClearBadgeForButton(NetworkConsoleButton);
                 return;
             }
             if (sender == DebugConsoleButton)
             {
-                SetActiveConsoleWindow(Enums.ConsoleType.Debug);
+                LeTransit.Content = debugConsole;
+                currentConsole = Enums.ConsoleType.Debug;
+                ClearBadgeForButton(DebugConsoleButton);
                 return;
             }
             if (sender == WorldGenConsoleButton)
             {
-                SetActiveConsoleWindow(Enums.ConsoleType.WorldGen);
+                LeTransit.Content = worldConsole;
+                currentConsole = Enums.ConsoleType.WorldGen;
+                ClearBadgeForButton(WorldGenConsoleButton);
                 return;
             }
             #endregion

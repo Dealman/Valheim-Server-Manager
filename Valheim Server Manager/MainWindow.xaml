@@ -18,16 +18,22 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+        <local:MessageConsole x:Key="LeConsol1" x:Name="NormalOutputConsole" Type="Normal" Margin="0" Title="Output Console (Normal)" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <local:MessageConsole x:Key="NetworkConsole" x:Name="NetworkOutputConsole" Type="Network" Margin="0" Title="Output Console (Network)" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <local:MessageConsole x:Key="DebugConsole" x:Name="DebugOutputConsole" Type="Debug"  Margin="0" Title="Output Console (Debug)" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <local:MessageConsole x:Key="WorldGenConsole" x:Name="WorldGenOutputConsole" Type="WorldGen"  Margin="0" Title="Output Console (WorldGen)" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <local:CustomListDisplay x:Key="AdminList" x:Name="AdminListBox" Margin="0" Title="List of Admins" Type="Admin" Visibility="Visible"/>
+        <local:CustomListDisplay x:Key="BanList" Margin="0" Title="List of Banned Players" Type="Banned" Visibility="Visible"/>
+        <local:CustomListDisplay x:Key="PermitList" Margin="0" Title="List of Permitted Players" Type="Permitted" Visibility="Visible"/>
+        <local:PlayerListControl x:Key="NewPlayerList" Margin="0" Visibility="Visible"/>
     </Window.Resources>
     <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
         <TabControl Margin="0,0,0,30">
             <TabItem Header="Main">
                 <Grid x:Name="MainGrid" HorizontalAlignment="Stretch">
-                    <!-- <RichTextBox x:Name="OutputConsoleRTB" Margin="10,42,10,74" IsReadOnly="True" mah:TextBoxHelper.Watermark="Server output will be printed here once the server is started and running." Padding="2,4"/> -->
                     <Border x:Name="FakeConsole" BorderBrush="{DynamicResource MahApps.Brushes.Button.Border}" BorderThickness="1" Margin="10,250,10,74" Focusable="True" Visibility="Collapsed">
                         <Grid>
                             <ScrollViewer x:Name="Scrolleroni" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualHeight}" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Grid}},Path=ActualWidth}" CanContentScroll="True">
-                                <!-- <TextBlock x:Name="TextThing" Padding="2,2,0,0" TextWrapping="WrapWithOverflow" Visibility="Hidden"/> -->
                                 <local:SelectableTextBlock x:Name="TextThing" Padding="2,2,0,0" TextWrapping="WrapWithOverflow" Visibility="Visible">
                                     <local:SelectableTextBlock.ContextMenu>
                                         <ContextMenu x:Name="tContextMenu" Opened="tContextMenu_Opened">
@@ -41,46 +47,52 @@
                             </ScrollViewer>
                         </Grid>
                     </Border>
-                    <TextBox Margin="10,0,50,42" TextWrapping="Wrap" VerticalAlignment="Bottom" MinHeight="27" mah:TextBoxHelper.Watermark="Send a command..." IsEnabled="False" ToolTip="At the moment, it's not possible to send commands to the server" ToolTipService.ShowOnDisabled="True"/>
-                    <Button x:Name="SendMessageB" Content="Send" Margin="0,0,10,42" VerticalAlignment="Bottom" MinHeight="27" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Right" ToolTip="At the moment, it's not possible to send commands to the server" IsEnabled="False" ToolTipService.ShowOnDisabled="True"/>
-                    <Button x:Name="StartButton" Content="Start Server" Margin="277,0,10,10" VerticalAlignment="Bottom" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
-                    <CheckBox Content="Automatically Restart" HorizontalAlignment="Left" Margin="10,0,0,13" VerticalAlignment="Bottom" IsChecked="True" IsEnabled="False"/>
-                    <CheckBox x:Name="UpdateCheckBox" Content="Check for Updates" HorizontalAlignment="Left" Margin="151,0,0,13" VerticalAlignment="Bottom" IsChecked="True" Click="Button_Click" IsEnabled="False"/>
-                    <StackPanel Orientation="Vertical">
-                        <DockPanel LastChildFill="False" Margin="10">
+                    <!--<TextBox Margin="10,0,50,42" TextWrapping="Wrap" VerticalAlignment="Bottom" MinHeight="27" mah:TextBoxHelper.Watermark="Send a command..." IsEnabled="False" ToolTip="At the moment, it's not possible to send commands to the server" ToolTipService.ShowOnDisabled="True"/>
+                    <Button x:Name="SendMessageB" Content="Send" Margin="0,0,10,42" VerticalAlignment="Bottom" MinHeight="27" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Right" ToolTip="At the moment, it's not possible to send commands to the server" IsEnabled="False" ToolTipService.ShowOnDisabled="True"/>-->
+                    <!--<Button x:Name="StartButton" Content="Start Server" Margin="277,0,10,10" VerticalAlignment="Bottom" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal"/>-->
+                    <DockPanel>
+                        <DockPanel Margin="10" LastChildFill="False" DockPanel.Dock="Top">
                             <!-- Output Consoles -->
-                            <mah:Badged x:Name="WorldGenBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Left">
-                                <Button x:Name="WorldGenConsoleButton" Content="WorldGen" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                            <mah:Badged x:Name="NetworkBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Left" Panel.ZIndex="3">
+                                <Button x:Name="NetworkConsoleButton" Content="Network" Foreground="{DynamicResource MahApps.Brushes.Accent}" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="1" Focusable="False" Click="Button_Click" BorderBrush="{DynamicResource MahApps.Brushes.Accent}"/>
                             </mah:Badged>
-                            <mah:Badged x:Name="NetworkBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Left">
-                                <Button x:Name="NetworkConsoleButton" Content="Network" Foreground="{DynamicResource MahApps.Brushes.Accent}" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
-                            </mah:Badged>
-                            <mah:Badged x:Name="DebugBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" DockPanel.Dock="Left">
+                            <mah:Badged x:Name="DebugBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Left" Panel.ZIndex="2">
                                 <Button x:Name="DebugConsoleButton" Content="Debug" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                             </mah:Badged>
-                            <!-- Player List & Admin, Permit and Ban Lists -->
-                            <mah:Badged x:Name="PermitBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Badge="{Binding ElementName=PermitListBox, Path=ListCount}" DockPanel.Dock="Right">
-                                <Button x:Name="PermittedButton" Content="Permitted" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                            <mah:Badged x:Name="WorldGenBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Left" Panel.ZIndex="1">
+                                <Button x:Name="WorldGenConsoleButton" Content="WorldGen" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                             </mah:Badged>
-                            <mah:Badged x:Name="BanBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Badge="{Binding ElementName=BanListBox, Path=ListCount}" DockPanel.Dock="Right">
+                            <!-- Player List & Admin, Permit and Ban Lists -->
+                            <mah:Badged x:Name="BanBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Badge="{Binding Path=ListCount}" DataContext="{StaticResource BanList}" DockPanel.Dock="Right">
                                 <Button x:Name="BannedButton" Content="Banned" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                             </mah:Badged>
-                            <local:FixedBadged x:Name="AdminBadge" BadgePlacementMode="TopRight" ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Badge="{Binding ElementName=AdminListBox, Path=ListCount}" DockPanel.Dock="Right">
+                            <mah:Badged x:Name="PermitBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Badge="{Binding Path=ListCount}" DataContext="{StaticResource PermitList}" DockPanel.Dock="Right">
+                                <Button x:Name="PermittedButton" Content="Permitted" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
+                            </mah:Badged>
+                            <local:FixedBadged x:Name="AdminBadge" BadgePlacementMode="TopRight" ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" Badge="{Binding Path=ListCount}" DataContext="{StaticResource AdminList}" DockPanel.Dock="Right">
                                 <Button x:Name="AdminButton" Content="Admins" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click"/>
                             </local:FixedBadged>
                             <local:FixedBadged x:Name="PlayerCountBadge" BadgePlacementMode="TopRight" Badge="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Right">
                                 <Button x:Name="PlayerListButton" Content="Player List" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Click="Button_Click" Padding="5"/>
                             </local:FixedBadged>
                         </DockPanel>
-                    </StackPanel>
-                    <local:MessageConsole x:Name="NormalOutputConsole" Type="Normal" Margin="10,39,10,74" Title="Output Console (Normal)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    <local:MessageConsole x:Name="NetworkOutputConsole" Type="Network" Margin="10,39,10,74" Title="Output Console (Network)" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    <local:MessageConsole x:Name="DebugOutputConsole" Type="Debug"  Margin="10,39,10,74" Title="Output Console (Debug)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    <local:MessageConsole x:Name="WorldGenOutputConsole" Type="WorldGen"  Margin="10,39,10,74" Title="Output Console (WorldGen)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    <local:CustomListDisplay x:Name="AdminListBox" Margin="10,40,10,74" Title="List of Admins" Type="Admin" Visibility="Collapsed"/>
+                        <DockPanel Margin="10,0,10,10" MinHeight="200" DockPanel.Dock="Top">
+                            <Button x:Name="StartButton" Content="Start Server" Margin="0,5,0,0" VerticalAlignment="Bottom" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" DockPanel.Dock="Bottom"/>
+                            <DockPanel LastChildFill="True" Margin="0,5,0,0" DockPanel.Dock="Bottom">
+                                <Button x:Name="SendMessageB" Content="Send" Margin="0" VerticalAlignment="Top" MinHeight="27" mah:ControlsHelper.ContentCharacterCasing="Normal" ToolTip="At the moment, it's not possible to send commands to the server" IsEnabled="False" ToolTipService.ShowOnDisabled="True" DockPanel.Dock="Right" HorizontalAlignment="Left"/>
+                                <TextBox Margin="0,0,5,0" TextWrapping="Wrap" VerticalAlignment="Top" MinHeight="27" mah:TextBoxHelper.Watermark="Send a command..." IsEnabled="False" ToolTip="At the moment, it's not possible to send commands to the server" ToolTipService.ShowOnDisabled="True" DockPanel.Dock="Left" Padding="4"/>
+                            </DockPanel>
+                            <mah:TransitioningContentControl x:Name="LeTransit" Transition="Right" Margin="0" Content="{StaticResource NetworkConsole}" DockPanel.Dock="Top"/>
+                        </DockPanel>
+                    </DockPanel>
+                    <!--<local:MessageConsole x:Name="NormalOutputConsole" Type="Normal" Margin="10,39,10,74" Title="Output Console (Normal)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+                    <!--<local:MessageConsole x:Name="NetworkOutputConsole" Type="Network" Margin="10,39,10,74" Title="Output Console (Network)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+                    <!--<local:MessageConsole x:Name="DebugOutputConsole" Type="Debug"  Margin="10,39,10,74" Title="Output Console (Debug)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+                    <!--<local:MessageConsole x:Name="WorldGenOutputConsole" Type="WorldGen"  Margin="10,39,10,74" Title="Output Console (WorldGen)" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+                    <!--<local:CustomListDisplay x:Name="AdminListBox" Margin="10,40,10,74" Title="List of Admins" Type="Admin" Visibility="Collapsed"/>
                     <local:CustomListDisplay x:Name="BanListBox" Margin="10,40,10,74" Title="List of Banned Players" Type="Banned" Visibility="Collapsed"/>
                     <local:CustomListDisplay x:Name="PermitListBox" Margin="10,40,10,74" Title="List of Permitted Players" Type="Permitted" Visibility="Collapsed"/>
-                    <local:PlayerListControl x:Name="NewPlayerList" Margin="10,40,10,74" Visibility="Collapsed"/>
+                    <local:PlayerListControl x:Name="NewPlayerList" Margin="10,40,10,74" Visibility="Collapsed"/>-->
                 </Grid>
             </TabItem>
             <TabItem Header="Server Settings">
