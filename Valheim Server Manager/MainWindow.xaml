@@ -48,7 +48,7 @@
                         </Grid>
                     </Border>
                     <DockPanel>
-                        <DockPanel Margin="10" LastChildFill="False" DockPanel.Dock="Top">
+                        <DockPanel Margin="10,5" LastChildFill="False" DockPanel.Dock="Top">
                             <!-- Output Consoles -->
                             <mah:Badged x:Name="NetworkBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Left" Panel.ZIndex="3">
                                 <Button x:Name="NetworkConsoleButton" Content="Network" Foreground="{DynamicResource MahApps.Brushes.Accent}" Margin="0" VerticalAlignment="Top" mah:ControlsHelper.ContentCharacterCasing="Normal" HorizontalAlignment="Left" BorderThickness="1" Focusable="False" Click="Button_Click" BorderBrush="{DynamicResource MahApps.Brushes.Accent}"/>
