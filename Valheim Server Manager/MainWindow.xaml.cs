@@ -651,6 +651,36 @@ namespace Valheim_Server_Manager
             }
             #endregion
 
+            #region Setting Tab Buttons
+            if (sender == SteamButton)
+            {
+                if (SteamManager.SteamCMD.GetSteamCMDState() != SteamManager.SteamCMD.SteamCMDState.Installed)
+                    SteamManager.SteamCMD.DownloadAndInstall();
+                //else
+                    // TODO: Uninstall SteamCMD?
+            }
+
+            if (sender == SteamUpdate)
+            {
+                if (ValheimServer.ValidatePath(workingDirectory))
+                {
+                    var version = SteamManager.Server.GetVersion(workingDirectory);
+                    var latest = SteamManager.Server.GetLatestVersion();
+
+                    if (version == latest)
+                    {
+                        MessageBox.Show("Latest version is already installed, not update necessary.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    } else {
+                        MessageBoxResult mbr = MessageBox.Show("Update Available!", "Update?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (mbr == MessageBoxResult.Yes)
+                            await SteamManager.Server.UpdateValdiate(workingDirectory);
+                        else
+                            return;
+                    }
+                }
+            }
+            #endregion
+
             if (sender == ServerDirButton)
             {
                 using (WinForms.FolderBrowserDialog fbd = new WinForms.FolderBrowserDialog())
@@ -686,7 +716,6 @@ namespace Valheim_Server_Manager
                     }
                 }
             }
-
             if (sender == SaveDirButton)
             {
                 using (WinForms.FolderBrowserDialog fbd = new WinForms.FolderBrowserDialog())
@@ -712,7 +741,6 @@ namespace Valheim_Server_Manager
                     }
                 }
             }
-
             if (sender == StartButton)
             {
                 if (!String.IsNullOrWhiteSpace(workingDirectory) && File.Exists(Path.Combine(workingDirectory, "valheim_server.exe")))
@@ -777,58 +805,11 @@ namespace Valheim_Server_Manager
         }
         #endregion
 
-        #region ContextMenu Event Handlers
-        /*
-        private void tContextMenu_Opened(object sender, RoutedEventArgs e)
-        {
-            if (!String.IsNullOrWhiteSpace(TextThing.Text))
-            {
-                tContextSelect.IsEnabled = true;
-                tContextCopy.IsEnabled = true;
-                tContextClear.IsEnabled = true;
-            } else {
-                tContextSelect.IsEnabled = false;
-                tContextCopy.IsEnabled = false;
-                tContextClear.IsEnabled = false;
-            }
-        }
-        private void tContextItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender == tContextSelect)
-            {
-                if (!String.IsNullOrWhiteSpace(TextThing.Text))
-                {
-                    TextThing.SelectAll();
-                }
-            }
-
-            if (sender == tContextCopy)
-            {
-                //MessageBox.Show(TextThing.SelectedText);
-            }
-
-            if (sender == tContextClear)
-                TextThing.Clear();
-        }
-        */
-        #endregion
-
         #region Keybindings
         private void MW_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            //Debug.WriteLine($"Key: {e.Key.ToString()} Modifiers: {e.KeyboardDevice.Modifiers.ToString()}");
-
             switch (e.Key)
             {
-                // Copy Text
-                /*
-                case Key.C:
-                    if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-                    {
-                        TextThing.CopyToClipboard();
-                    }
-                    break;
-                */
                 // Reset window location
                 case Key.R:
                     if (e.KeyboardDevice.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
@@ -905,6 +886,33 @@ namespace Valheim_Server_Manager
         private void UpdateCheck_Click(object sender, RoutedEventArgs e)
         {
             ClickOnceManager.CheckForUpdate();
+        }
+
+        private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source is TabControl)
+            {
+                var tab = (TabItem)MainTabControl.SelectedItem;
+
+                if (tab == null)
+                {
+                    e.Handled = true;
+                    return;
+                }
+
+                if (tab == SettingsTab)
+                {
+                    if (SteamManager.SteamCMD.GetSteamCMDState() == SteamManager.SteamCMD.SteamCMDState.Installed)
+                    {
+                        SteamButton.Content = "Uninstall SteamCMD";
+                    } else {
+                        SteamButton.Content = "Install SteamCMD";
+                    }
+
+
+                    e.Handled = true;
+                }
+            }
         }
     }
 }

@@ -91,6 +91,8 @@ namespace Valheim_Server_Manager
         private static extern bool CloseHandle(IntPtr hHandle);
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern int GetWindowText(IntPtr hWnd, StringBuilder strText, int maxCount);
+        [DllImport("user32.dll")]
+        public static extern int SetWindowText(IntPtr hWnd, string text);
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern int GetWindowTextLength(IntPtr hWnd);
         [DllImport("user32.dll")]

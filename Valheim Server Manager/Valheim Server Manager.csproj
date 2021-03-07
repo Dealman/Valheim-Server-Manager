@@ -34,8 +34,8 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>10</ApplicationRevision>
-    <ApplicationVersion>0.2.0.%2a</ApplicationVersion>
+    <ApplicationRevision>12</ApplicationRevision>
+    <ApplicationVersion>0.2.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -96,6 +96,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
@@ -122,6 +124,7 @@
     <Compile Include="Controls\SteamIDListControl.xaml.cs">
       <DependentUpon>SteamIDListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SteamManager.cs" />
     <Compile Include="Utility\Enums.cs" />
     <Compile Include="Controls\MessageConsoleControl.xaml.cs">
       <DependentUpon>MessageConsoleControl.xaml</DependentUpon>

@@ -75,7 +75,7 @@ namespace Valheim_Server_Manager
                 process.WaitForExit();
             }
 
-            Process.Start(Application.ResourceAssembly.Location);
+            System.Windows.Forms.Application.Restart();
             Application.Current.Shutdown();
         }
     }
