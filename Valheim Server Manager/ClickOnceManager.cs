@@ -2,22 +2,21 @@
 using System;
 using System.Deployment.Application;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 
 namespace Valheim_Server_Manager
 {
     public static class ClickOnceManager
     {
-        public static string CurrentVersion()
+        public static string CurrentVersion
         {
-            if (ApplicationDeployment.IsNetworkDeployed)
+            get
             {
-                ApplicationDeployment appDeployment = ApplicationDeployment.CurrentDeployment;
-
-                return appDeployment.CurrentVersion.ToString();
+                return ApplicationDeployment.IsNetworkDeployed
+                       ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
+                       : Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
-
-            return "1.0.0.0";
         }
 
         public static void CheckForUpdate()

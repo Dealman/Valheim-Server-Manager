@@ -915,7 +915,7 @@ namespace Valheim_Server_Manager
 
                 if (tab == AboutTab)
                 {
-                    VersionLabel.Text = $"Version: {ClickOnceManager.CurrentVersion()}";
+                    VersionLabel.Text = $"Version: {ClickOnceManager.CurrentVersion}";
                 }
             }
         }
