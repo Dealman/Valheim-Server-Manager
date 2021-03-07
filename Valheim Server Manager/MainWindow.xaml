@@ -173,7 +173,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <StatusBar x:Name="StatusBar1" Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,354,0,0" VerticalAlignment="Bottom" Focusable="False" MinHeight="30" MaxHeight="30" MaxWidth="{Binding ElementName=MW, Path=ActualWidth}" Padding="0">
+        <StatusBar x:Name="StatusBar1" Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,354,0,0" VerticalAlignment="Bottom" Focusable="False" MinHeight="30" MaxHeight="30" MaxWidth="{Binding ElementName=MainGrid, Path=ActualWidth}" Padding="0">
             <DockPanel HorizontalAlignment="Stretch"  Margin="0" Width="{Binding ElementName=StatusBar1,Path=ActualWidth}">
                 <fa:ImageAwesome x:Name="ServerStateIcon" Icon="Cog" Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" HorizontalAlignment="Left" SpinDuration="3" DockPanel.Dock="Left"/>
                 <Label x:Name="PlayerCountLabel" HorizontalAlignment="Right" Content="0/10" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,0,10,0"/>

@@ -10,9 +10,14 @@ namespace Valheim_Server_Manager
     {
         public static string CurrentVersion()
         {
-            ApplicationDeployment appDeployment = ApplicationDeployment.CurrentDeployment;
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                ApplicationDeployment appDeployment = ApplicationDeployment.CurrentDeployment;
 
-            return appDeployment.CurrentVersion.ToString();
+                return appDeployment.CurrentVersion.ToString();
+            }
+
+            return "1.0.0.0";
         }
 
         public static void CheckForUpdate()
