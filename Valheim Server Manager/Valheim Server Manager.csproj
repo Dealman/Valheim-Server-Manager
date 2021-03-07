@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>https://raw.githubusercontent.com/Dealman/Valheim-Server-Manager/master/publish/</InstallUrl>
+    <InstallUrl>https://raw.githubusercontent.com/Dealman/Valheim-Server-Manager/master/Valheim%2520Server%2520Manager/publish/</InstallUrl>
     <SupportUrl>https://github.com/Dealman/Valheim-Server-Manager</SupportUrl>
     <ErrorReportUrl>https://github.com/Dealman/Valheim-Server-Manager</ErrorReportUrl>
     <TargetCulture>en</TargetCulture>
