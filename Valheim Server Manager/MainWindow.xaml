@@ -156,7 +156,7 @@
                 </Grid>
             </TabItem>
             <TabItem x:Name="DummyTab" Header="" Visibility="Hidden" Width="216" TabIndex="5"/>
-            <TabItem Header="About" Margin="0,0,0,5">
+            <TabItem x:Name="AboutTab" Header="About" Margin="0,0,0,5">
                 <Grid>
                     <!--<DockPanel LastChildFill="False" Margin="10" VerticalAlignment="Top">-->
                     <Grid Background="{DynamicResource MahApps.Brushes.Accent2}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="74" Height="74" Margin="10,10,0,0">
@@ -164,7 +164,7 @@
                     </Grid>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="89,22,0,0">
                         <Label Content="Valheim Server Manager" DockPanel.Dock="Left" VerticalAlignment="Top" FontSize="14.0" Margin="0" HorizontalAlignment="Left" Padding="0"/>
-                        <TextBlock Text="Version 1.0.0.0" VerticalAlignment="Top" FontSize="10.0" HorizontalAlignment="Left" Margin="0" Width="160" TextAlignment="Center" FontStyle="Italic" Foreground="{DynamicResource MahApps.Brushes.Gray4}"/>
+                        <TextBlock x:Name="VersionLabel" Text="Version 1.0.0.0" VerticalAlignment="Top" FontSize="10.0" HorizontalAlignment="Left" Margin="0" Width="160" TextAlignment="Center" FontStyle="Italic" Foreground="{DynamicResource MahApps.Brushes.Gray4}"/>
                         <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0" Width="150" TextAlignment="Center" Foreground="{DynamicResource MahApps.Brushes.SystemControlHyperlinkText}">
                             <Hyperlink Click="UpdateCheck_Click">Check for Updates</Hyperlink>
                         </TextBlock>

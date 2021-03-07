@@ -912,6 +912,11 @@ namespace Valheim_Server_Manager
 
                     e.Handled = true;
                 }
+
+                if (tab == AboutTab)
+                {
+                    VersionLabel.Text = $"Version: {ClickOnceManager.CurrentVersion()}";
+                }
             }
         }
     }

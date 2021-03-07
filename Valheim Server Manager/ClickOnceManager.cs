@@ -8,6 +8,13 @@ namespace Valheim_Server_Manager
 {
     public static class ClickOnceManager
     {
+        public static string CurrentVersion()
+        {
+            ApplicationDeployment appDeployment = ApplicationDeployment.CurrentDeployment;
+
+            return appDeployment.CurrentVersion.ToString();
+        }
+
         public static void CheckForUpdate()
         {
             UpdateCheckInfo info = null;
