@@ -63,6 +63,7 @@ namespace Valheim_Server_Manager
             bannedView = (CustomListDisplay)FindResource("BanList");
         }
 
+        #region Server Events
         private void ValheimServer_OnServerStateChanged(object sender, ValheimServer.StateChangedArgs e)
         {
             switch (e.NewState)
@@ -95,12 +96,10 @@ namespace Valheim_Server_Manager
                     break;
             }
         }
-
         private void ValheimServer_OnServerStarted(Process process, EventArgs e)
         {
             // Server has started
         }
-
         private void ValheimServer_OnServerStopped(object sender, EventArgs e)
         {
             // Server was stopped
@@ -109,7 +108,6 @@ namespace Valheim_Server_Manager
                 IsServerSetupValid();
             });
         }
-
         private void ValheimServer_OnOutputReceived(object sender, string outputMessage)
         {
             if (!String.IsNullOrWhiteSpace(outputMessage))
@@ -125,7 +123,6 @@ namespace Valheim_Server_Manager
                     ParseMessageForConnection(msg.OriginalMessage);
             }
         }
-
         private void ParseMessageForConnection(string msg)
         {
             // Someone's trying to connect, try to fetch the SteamID
@@ -215,6 +212,7 @@ namespace Valheim_Server_Manager
                 }
             }
         }
+        #endregion
 
         #region UI Update Methods
         // These are methods used to update the UI, which will be on another thread - thus we use the dispatcher
@@ -274,40 +272,20 @@ namespace Valheim_Server_Manager
             switch (type)
             {
                 case Enums.MessageType.Network:
-                    var n = FindResource("NetworkConsole") as MessageConsole;
-                    n.AddMessage(msg);
-                    //NetworkOutputConsole.AddMessage(msg);
+                    networkConsole.AddMessage(msg);
+                    IncrementBadge(Enums.MessageType.Network);
                     break;
 
                 case Enums.MessageType.Debug:
-                    var d = FindResource("DebugConsole") as MessageConsole;
-                    d.AddMessage(msg);
-                    //DebugOutputConsole.AddMessage(msg);
+                    debugConsole.AddMessage(msg);
+                    IncrementBadge(Enums.MessageType.Debug);
                     break;
 
                 case Enums.MessageType.WorldGen:
-                    var w = FindResource("WorldGenConsole") as MessageConsole;
-                    w.AddMessage(msg);
-                    //WorldGenOutputConsole.AddMessage(msg);
+                    worldConsole.AddMessage(msg);
+                    IncrementBadge(Enums.MessageType.WorldGen);
                     break;
             }
-
-            /*
-            this.Dispatcher.Invoke(() =>
-            {
-                Run run = new Run
-                {
-                    Text = msg + "\n",
-                    Foreground = msgColour,
-                    FontWeight = msgWeight.GetValueOrDefault(),
-                    FontSize = msgSize
-                };
-
-                TextThing.Inlines.Add(run);
-                Scrolleroni.ScrollToEnd();
-                IncrementBadge(type);
-            });
-            */
         }
         private void ClearBadgeForButton(Button button)
         {
@@ -322,21 +300,24 @@ namespace Valheim_Server_Manager
         }
         private void IncrementBadge(Enums.MessageType mType)
         {
-            switch (mType)
+            this.Dispatcher.Invoke(() =>
             {
-                case Enums.MessageType.Network:
-                    if (currentConsole != Enums.ConsoleType.Network)
-                        NetworkBadge.Badge = (NetworkBadge.Badge == null ? 1 : ((int)NetworkBadge.Badge + 1));
-                    return;
-                case Enums.MessageType.Debug:
-                    if (currentConsole != Enums.ConsoleType.Debug)
-                        DebugBadge.Badge = (DebugBadge.Badge == null ? 1 : ((int)DebugBadge.Badge + 1));
-                    return;
-                case Enums.MessageType.WorldGen:
-                    if (currentConsole != Enums.ConsoleType.WorldGen)
-                        WorldGenBadge.Badge = (WorldGenBadge.Badge == null ? 1 : ((int)WorldGenBadge.Badge + 1));
-                    return;
-            }
+                switch (mType)
+                {
+                    case Enums.MessageType.Network:
+                        if (LeTransit.Content != networkConsole)
+                            NetworkBadge.Badge = (NetworkBadge.Badge == null ? 1 : ((int)NetworkBadge.Badge + 1));
+                        return;
+                    case Enums.MessageType.Debug:
+                        if (LeTransit.Content != debugConsole)
+                            DebugBadge.Badge = (DebugBadge.Badge == null ? 1 : ((int)DebugBadge.Badge + 1));
+                        return;
+                    case Enums.MessageType.WorldGen:
+                        if (LeTransit.Content != worldConsole)
+                            WorldGenBadge.Badge = (WorldGenBadge.Badge == null ? 1 : ((int)WorldGenBadge.Badge + 1));
+                        return;
+                }
+            });
         }
         #endregion
 
@@ -487,6 +468,16 @@ namespace Valheim_Server_Manager
             ValheimServer.OnServerStopped += ValheimServer_OnServerStopped;
             ValheimServer.OnOutputReceived += ValheimServer_OnOutputReceived;
             ValheimServer.OnServerStateChanged += ValheimServer_OnServerStateChanged;
+
+            Scheduling.ScheduledTask task1 = new Scheduling.ScheduledTask { Days = Scheduling.Days.All, Task = Scheduling.TaskKind.Restart, Time = DateTime.Now };
+            Scheduling.ScheduledTask task2 = new Scheduling.ScheduledTask { Days = Scheduling.Days.Weekdays, Task = Scheduling.TaskKind.Update, Time = DateTime.Now };
+            Scheduling.ScheduledTask task3 = new Scheduling.ScheduledTask { Days = Scheduling.Days.Weekends, Task = Scheduling.TaskKind.Restart, Time = DateTime.Now };
+            Scheduling.ScheduledTask task4 = new Scheduling.ScheduledTask { Days = Scheduling.Days.Wednesday, Task = Scheduling.TaskKind.UpdateAndRestart, Time = DateTime.Now };
+            ScheduleGrid.Items.Add(task1);
+            ScheduleGrid.Items.Add(task2);
+            ScheduleGrid.Items.Add(task3);
+            ScheduleGrid.Items.Add(task4);
+            ScheduleGrid.Items.Refresh();
         }
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -555,7 +546,7 @@ namespace Valheim_Server_Manager
         }
         private void MetroWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DummyTab.Width = this.ActualWidth - 542 - 5; // Sum of tabs, minus an extra 5 for margin, nasty way of doing this but eh, it works
+            DummyTab.Width = this.ActualWidth - 580 - 5; // Sum of tabs, minus an extra 5 for margin, nasty way of doing this but eh, it works
         }
         #endregion
 
@@ -757,7 +748,7 @@ namespace Valheim_Server_Manager
                             WorldName = WorldNameTextBox.Text
                         });
                     } else {
-                        if (MessageBox.Show("Are you sure you wish to stop the server?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        if (MessageBox.Show("Are you sure you wish to stop the server?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                         {
                                 ValheimServer.Stop();
                         } else {
@@ -888,6 +879,7 @@ namespace Valheim_Server_Manager
             ClickOnceManager.CheckForUpdate();
         }
 
+        // TODO: Version checking, it's slow af
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.Source is TabControl)
@@ -909,13 +901,13 @@ namespace Valheim_Server_Manager
                         SteamButton.Content = "Install SteamCMD";
                     }
 
-
                     e.Handled = true;
                 }
 
                 if (tab == AboutTab)
                 {
                     VersionLabel.Text = $"Version: {ClickOnceManager.CurrentVersion}";
+                    ThemeManager.Current.ChangeTheme(MyPage, ThemeManager.Current.DetectTheme(this));
                 }
             }
         }

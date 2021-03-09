@@ -160,6 +160,7 @@ namespace Valheim_Server_Manager
                 ServerStarted(serverProcess, EventArgs.Empty);
             } else {
                 ServerStopped(null, EventArgs.Empty);
+                serverProcess.Dispose();
             }
 
             //serverProcess.WaitForExit();
@@ -209,42 +210,82 @@ namespace Valheim_Server_Manager
 
         }
 
-        public static void Stop()
+        public async static void Stop()
         {
-            if (!IsServerRunning())
-                return;
-
-            // Update Server State: Closing
-            ServerStateChanged(null, new StateChangedArgs() { NewState = Enums.ServerStateEnum.Closing });
-
-            // We'll want to try and close the server gracefully, this *can* be done in various ways
-            // But this was the only reliable way I could find without running the risk of world corruption/not saving
-            // Since the server console expects you to close via CTRL+C
-            IEnumerable<IntPtr> windows = NativeMethods.FindWindowsWithText("Valheim");
-
-            foreach (IntPtr ptr in windows)
+            var t = Task.Run(() =>
             {
-                string wndTxt = NativeMethods.GetWindowText(ptr);
-                if (!String.IsNullOrWhiteSpace(wndTxt))
+                if (!IsServerRunning())
+                    return;
+
+                // Update Server State: Closing
+                ServerStateChanged(null, new StateChangedArgs() { NewState = Enums.ServerStateEnum.Closing });
+
+                // We'll want to try and close the server gracefully, this *can* be done in various ways
+                // But this was the only reliable way I could find without running the risk of world corruption/not saving
+                // Since the server console expects you to close via CTRL+C
+                IEnumerable<IntPtr> windows = NativeMethods.FindWindowsWithText("Valheim");
+
+                foreach (IntPtr ptr in windows)
                 {
-                    // We rule out the server manager itself as it'd part of the result
-                    if (!wndTxt.Contains("Valheim Server Manager"))
+                    string wndTxt = NativeMethods.GetWindowText(ptr);
+                    if (!String.IsNullOrWhiteSpace(wndTxt))
                     {
-                        // If the game client is running, we'd have 2 windows called "Valheim", so we need a way to distinguish the two
-                        // We do this by checking the executing assembly, since the server would contain 'valheim_server.exe' while the game 'valheim.exe'
-                        string execPath = NativeMethods.GetWindowPath(ptr);
-                        if (!String.IsNullOrWhiteSpace(execPath) && execPath.Contains("valheim_server"))
+                        // We rule out the server manager itself as it'd part of the result
+                        if (!wndTxt.Contains("Valheim Server Manager"))
                         {
-                            NativeMethods.SendMessage(ptr, 0x10, IntPtr.Zero, IntPtr.Zero);
-                            return;
+                            // If the game client is running, we'd have 2 windows called "Valheim", so we need a way to distinguish the two
+                            // We do this by checking the executing assembly, since the server would contain 'valheim_server.exe' while the game 'valheim.exe'
+                            string execPath = NativeMethods.GetWindowPath(ptr);
+                            if (!String.IsNullOrWhiteSpace(execPath) && execPath.Contains("valheim_server"))
+                            {
+                                NativeMethods.SendMessage(ptr, 0x10, IntPtr.Zero, IntPtr.Zero);
+                                return;
+                            }
                         }
                     }
                 }
-            }
 
-            // Weren't able to get the hidden window, kill process? Is it safe? World save? IronGate pls...
-            currentSettings.ServerProcess.CloseMainWindow();
-            currentSettings.ServerProcess.Kill();
+                // Weren't able to get the hidden window, kill process? Is it safe? World save? IronGate pls...
+                Debug.WriteLine("Unable to gracefully close the server, killing process.");
+                currentSettings.ServerProcess.CloseMainWindow();
+                currentSettings.ServerProcess.Kill();
+            });
+
+            //if (!IsServerRunning())
+            //    return;
+
+            //// Update Server State: Closing
+            //ServerStateChanged(null, new StateChangedArgs() { NewState = Enums.ServerStateEnum.Closing });
+
+            //// We'll want to try and close the server gracefully, this *can* be done in various ways
+            //// But this was the only reliable way I could find without running the risk of world corruption/not saving
+            //// Since the server console expects you to close via CTRL+C
+            //IEnumerable<IntPtr> windows = NativeMethods.FindWindowsWithText("Valheim");
+
+            //foreach (IntPtr ptr in windows)
+            //{
+            //    string wndTxt = NativeMethods.GetWindowText(ptr);
+            //    if (!String.IsNullOrWhiteSpace(wndTxt))
+            //    {
+            //        // We rule out the server manager itself as it'd part of the result
+            //        if (!wndTxt.Contains("Valheim Server Manager"))
+            //        {
+            //            // If the game client is running, we'd have 2 windows called "Valheim", so we need a way to distinguish the two
+            //            // We do this by checking the executing assembly, since the server would contain 'valheim_server.exe' while the game 'valheim.exe'
+            //            string execPath = NativeMethods.GetWindowPath(ptr);
+            //            if (!String.IsNullOrWhiteSpace(execPath) && execPath.Contains("valheim_server"))
+            //            {
+            //                NativeMethods.SendMessage(ptr, 0x10, IntPtr.Zero, IntPtr.Zero);
+            //                return;
+            //            }
+            //        }
+            //    }
+            //}
+
+            //// Weren't able to get the hidden window, kill process? Is it safe? World save? IronGate pls...
+            //Debug.WriteLine($"Unable to gracefully close the server, killing process.");
+            //currentSettings.ServerProcess.CloseMainWindow();
+            //currentSettings.ServerProcess.Kill();
         }
     }
 }

@@ -1,0 +1,53 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Valheim_Server_Manager"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="Valheim_Server_Manager.TestPage"
+      xmlns:fa="http://schemas.fontawesome.io/icons/"
+      mc:Ignorable="d"
+      Title="TestPage">
+
+    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1">
+        <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+            <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                <Grid>
+                    <Label Content="Create a New Scheduled Task" HorizontalAlignment="Left" Margin="11,11,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="Black" Padding="5"/>
+                    <Label x:Name="asdf" Content="Create a New Scheduled Task" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="{DynamicResource MahApps.Brushes.Accent}"/>
+                </Grid>
+                <Grid>
+                    <Separator Margin="11,0,10,0" VerticalAlignment="Top" Background="Black"/>
+                    <Separator Margin="10,0,10,10" VerticalAlignment="Top" Background="{DynamicResource MahApps.Brushes.Accent}"/>
+                </Grid>
+                <GroupBox Header="Task" Margin="11,0,10,10" mah:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top">
+                    <Grid>
+                        <RadioButton Content="Restart" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                        <RadioButton Content="Update" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top"/>
+                        <RadioButton Content="Restart &amp; Update" HorizontalAlignment="Left" Margin="10,56,0,10" VerticalAlignment="Top"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Interval" mah:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Margin="10,0" mah:HeaderedControlHelper.HeaderMargin="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Content="Monday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+                        <CheckBox Content="Tuesday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,33,0,0"/>
+                        <CheckBox Content="Wednesday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,56,0,0"/>
+                        <CheckBox Content="Thursday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,10,0,0"/>
+                        <CheckBox Content="Friday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,33,0,0"/>
+                        <CheckBox Content="Saturday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,57,0,10"/>
+                        <CheckBox Content="Sunday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="211,10,10,0"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0" HorizontalAlignment="Left">
+                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                        </StackPanel>
+                        <mah:TimePicker Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" SourceMinutes="{x:Static mah:TimePickerBase.IntervalOf5}" Culture="en-SE" mah:TextBoxHelper.Watermark="Choose Time"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+            
+        </Grid>
+    </Border>
+</Page>

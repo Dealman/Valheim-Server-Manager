@@ -29,7 +29,7 @@
     </Window.Resources>
     <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
         <TabControl x:Name="MainTabControl" Margin="0,0,0,30" SelectionChanged="MainTabControl_SelectionChanged">
-            <TabItem x:Name="MainTab" Header="Main">
+            <TabItem x:Name="MainTab" Header="Main" Margin="0,0,0,5" HorizontalAlignment="Left">
                 <Grid x:Name="MainGrid" HorizontalAlignment="Stretch" Margin="-3,0">
                     <DockPanel>
                         <DockPanel Margin="10,5" LastChildFill="False" DockPanel.Dock="Top">
@@ -68,7 +68,7 @@
                     </DockPanel>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="ConfigTab" Header="Server Config">
+            <TabItem x:Name="ConfigTab" Header="Server Config" Margin="0,0,0,5" HorizontalAlignment="Left">
                 <Grid x:Name="SettingsGrid" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                     <Label Content="Server Directory" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="ServerDirTextBox" Margin="10,41,65,0" TextWrapping="Wrap" VerticalAlignment="Top" ToolTip="Folder containing the valheim_server.exe file" mah:TextBoxHelper.Watermark="Example; C:/Program Files (x86)/Steam/steamapps/common/Valheim dedicated server" IsReadOnly="True" MinHeight="27" Focusable="False"/>
@@ -94,7 +94,7 @@
                     <Button x:Name="SaveDirButton" Content="Browse" HorizontalAlignment="Right" Margin="694,103,10,0" VerticalAlignment="Top" Click="Button_Click" mah:ControlsHelper.ContentCharacterCasing="Normal" MinWidth="50" IsTabStop="False"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="BackupTab" Header="Backups">
+            <TabItem x:Name="BackupTab" Header="Backups" HorizontalAlignment="Left">
                 <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                     <Label Content="Backup Directory:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Padding="0"/>
                     <TextBox HorizontalAlignment="Left" Height="27" Margin="10,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="683" MinHeight="27" mah:TextBoxHelper.Watermark="To Be Implemented" Focusable="False"/>
@@ -107,55 +107,66 @@
                     <CheckBox Content="Server Exit" HorizontalAlignment="Left" Margin="127,107,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="SettingsTab" Header="Settings">
+            <TabItem x:Name="SettingsTab" Header="Scheduling" HorizontalAlignment="Left">
                 <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
                     <!--<StackPanel Orientation="Vertical">-->
-                    <GroupBox Header="Server Updates (requires SteamCMD)" mah:ControlsHelper.ContentCharacterCasing="Normal" Margin="0,0,5,0" Grid.Row="0" Grid.Column="0">
+                    <GroupBox Header="Server Updates (requires SteamCMD)" mah:ControlsHelper.ContentCharacterCasing="Normal" Margin="0,0,5,0" Grid.Row="0" Grid.Column="0" Visibility="Collapsed">
                         <Grid>
                             <Button x:Name="SteamButton" Content="Install SteamCMD" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,10,0" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="167" Click="Button_Click" MinWidth="167" MinHeight="27" Focusable="False"/>
                             <CheckBox x:Name="ServerUpdatesCB" Content="Check for Updates" Margin="1,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <Label x:Name="ServerBuildLabel" Content="SteamCMD Installed: False&#xA;Current Build: 6315977&#xA;Latest Build:   6315977" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Bottom" FontStyle="Italic" Foreground="{DynamicResource MahApps.Brushes.Gray}"/>
+                            <Label x:Name="ServerBuildLabel" Content="Current Build: 6315977&#xA;Latest Build:   6315977" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Bottom" FontStyle="Italic" Foreground="{DynamicResource MahApps.Brushes.Gray}"/>
                             <CheckBox x:Name="UpdateStartCB" Content="Before Startup" Margin="10,23,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=ServerUpdatesCB}"/>
                             <CheckBox Content="On Timer (Minutes)" Margin="10,46,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"/>
                             <mah:NumericUpDown Value="30" Minimum="5" Maximum="720" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,69,0,0" IsEnabled="False"/>
                             <Button x:Name="SteamUpdate" Content="Check for Update" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,38,10,0" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="167" Click="Button_Click" MinWidth="167" MinHeight="27" Focusable="False"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Header="Server Restarts" mah:ControlsHelper.ContentCharacterCasing="Normal" Margin="5,0,0,0" Grid.Row="0" Grid.Column="1">
-                        <Grid>
-                            <CheckBox Content="Automatic Restarts" Margin="1,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"/>
-                            <CheckBox Content="Update Available" Margin="10,23,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"/>
-                            <CheckBox Content="On Timer (Minutes)" Margin="10,46,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"/>
-                            <mah:NumericUpDown Value="30" Minimum="5" Maximum="720" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,69,0,0" NumericInputMode="Numbers" IsEnabled="False"/>
-                        </Grid>
-                    </GroupBox>
-                    <GroupBox Header="Miscellaneous" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,5" mah:ControlsHelper.ContentCharacterCasing="Normal">
-                        <Grid>
-                            <CheckBox x:Name="___No_Name_" Content="Dark Mode" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"/>
-                            <CheckBox Content="Disable Automatic Theme" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,23,0,0" IsEnabled="False"/>
-                            <TextBlock Text="Theme:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,46,0,0" Width="114" TextAlignment="Center"/>
-                            <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,67,0,0" Width="114" IsEnabled="False">
-                                <ComboBoxItem Content="Blue" IsSelected="True"/>
-                                <ComboBoxItem Content="Red"/>
-                                <ComboBoxItem Content="Green"/>
-                                <ComboBoxItem Content="Teal"/>
-                                <ComboBoxItem Content="Amber"/>
-                                <ComboBoxItem Content="Indigo"/>
-                            </ComboBox>
-                        </Grid>
-                    </GroupBox>
+                    <DataGrid x:Name="ScheduleGrid" HorizontalAlignment="Left" Height="136" Margin="10,47,0,0" VerticalAlignment="Top" Width="724" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" IsReadOnly="True" ItemsSource="{Binding}" AlternationCount="2" AlternatingRowBackground="{DynamicResource MahApps.Brushes.Gray10}" CanUserSortColumns="False">
+                        <DataGrid.Resources>
+                            <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="ToolTip" Value="{Binding Column.(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Style.Setters>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+                                    <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                                    <Setter Property="BorderThickness" Value="1,0,0,1"/>
+                                </Style.Setters>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell" BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
+                                <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Task" Width="0.3*" Binding="{Binding Task}" ToolTipService.ToolTip="Type of Task" CanUserResize="False"/>
+                            <DataGridCheckBoxColumn Header="M" Binding="{Binding Monday, Mode=OneWay}" ToolTipService.ToolTip="Monday" CanUserResize="False"/>
+                            <DataGridCheckBoxColumn Header="T" Binding="{Binding Tuesday, Mode=OneWay}" ToolTipService.ToolTip="Tuesday" CanUserResize="False"/>
+                            <DataGridCheckBoxColumn Header="W" Binding="{Binding Wednesday, Mode=OneWay}" ToolTipService.ToolTip="Wednesday" CanUserResize="False"/>
+                            <DataGridCheckBoxColumn Header="T" Binding="{Binding Thursday, Mode=OneWay}" ToolTipService.ToolTip="Thursday" CanUserResize="False"/>
+                            <DataGridCheckBoxColumn Header="F" Binding="{Binding Friday, Mode=OneWay}" ToolTipService.ToolTip="Friday" CanUserResize="False"/>
+                            <DataGridCheckBoxColumn Header="S" Binding="{Binding Saturday, Mode=OneWay}" ToolTipService.ToolTip="Saturday" CanUserResize="False"/>
+                            <DataGridCheckBoxColumn Header="S" Binding="{Binding Sunday, Mode=OneWay}" ToolTipService.ToolTip="Sunday" CanUserResize="False"/>
+                            <DataGridTextColumn Header="Time" Width="*" Binding="{Binding Time}" ToolTipService.ToolTip="Execute At" CanUserResize="False"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Label Content="Scheduled Tasks" HorizontalAlignment="Center" Margin="11,11,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="Black"/>
+                    <Label Content="Scheduled Tasks" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="{DynamicResource MahApps.Brushes.Accent}"/>
+                    <Button Content="Create New" HorizontalAlignment="Left" Margin="10,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <Button Content="Edit" HorizontalAlignment="Left" Margin="90,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <Button Content="Remove" HorizontalAlignment="Left" Margin="170,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <Button Content="Clear" HorizontalAlignment="Left" Margin="659,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
                     <!--</StackPanel>-->
                 </Grid>
             </TabItem>
-            <TabItem x:Name="DummyTab" Header="" Visibility="Hidden" Width="216" TabIndex="5"/>
+            <TabItem x:Name="DummyTab" Header="" Visibility="Hidden" Width="183" TabIndex="5"/>
             <TabItem x:Name="AboutTab" Header="About" Margin="0,0,0,5">
                 <Grid>
                     <!--<DockPanel LastChildFill="False" Margin="10" VerticalAlignment="Top">-->
@@ -169,6 +180,11 @@
                             <Hyperlink Click="UpdateCheck_Click">Check for Updates</Hyperlink>
                         </TextBlock>
                     </StackPanel>
+                    <Frame Margin="10,89,10,10">
+                        <Frame.Content>
+                            <local:TestPage x:Name="MyPage"/>
+                        </Frame.Content>
+                    </Frame>
                     <!--</DockPanel>-->
                 </Grid>
             </TabItem>
