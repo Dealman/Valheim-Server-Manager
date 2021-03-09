@@ -29,9 +29,9 @@
     </Window.Resources>
     <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
         <TabControl x:Name="MainTabControl" Margin="0,0,0,30" SelectionChanged="MainTabControl_SelectionChanged">
-            <TabItem x:Name="MainTab" Header="Main" Margin="0,0,0,5" HorizontalAlignment="Left">
+            <TabItem x:Name="MainTab" Header="Main" Margin="0" HorizontalAlignment="Left">
                 <Grid x:Name="MainGrid" HorizontalAlignment="Stretch" Margin="-3,0">
-                    <DockPanel>
+                    <DockPanel Margin="0,5,0,0">
                         <DockPanel Margin="10,5" LastChildFill="False" DockPanel.Dock="Top">
                             <!-- Output Consoles -->
                             <mah:Badged x:Name="NetworkBadge" BadgePlacementMode="TopRight" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,5,0" DockPanel.Dock="Left" Panel.ZIndex="3">
@@ -68,7 +68,7 @@
                     </DockPanel>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="ConfigTab" Header="Server Config" Margin="0,0,0,5" HorizontalAlignment="Left">
+            <TabItem x:Name="ConfigTab" Header="Server Config" Margin="0" HorizontalAlignment="Left">
                 <Grid x:Name="SettingsGrid" Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
                     <Label Content="Server Directory" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="ServerDirTextBox" Margin="10,41,65,0" TextWrapping="Wrap" VerticalAlignment="Top" ToolTip="Folder containing the valheim_server.exe file" mah:TextBoxHelper.Watermark="Example; C:/Program Files (x86)/Steam/steamapps/common/Valheim dedicated server" IsReadOnly="True" MinHeight="27" Focusable="False"/>
@@ -121,7 +121,7 @@
                             <Button x:Name="SteamUpdate" Content="Check for Update" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,38,10,0" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="167" Click="Button_Click" MinWidth="167" MinHeight="27" Focusable="False"/>
                         </Grid>
                     </GroupBox>
-                    <DataGrid x:Name="ScheduleGrid" HorizontalAlignment="Left" Height="136" Margin="10,47,0,0" VerticalAlignment="Top" Width="724" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" IsReadOnly="True" ItemsSource="{Binding}" AlternationCount="2" AlternatingRowBackground="{DynamicResource MahApps.Brushes.Gray10}" CanUserSortColumns="False">
+                    <DataGrid x:Name="ScheduleGrid" Margin="10,41,10,42" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1" IsReadOnly="True" ItemsSource="{Binding}" AlternationCount="2" AlternatingRowBackground="{DynamicResource MahApps.Brushes.Gray10}" CanUserSortColumns="False">
                         <DataGrid.Resources>
                             <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
                                 <Style.Triggers>
@@ -157,17 +157,17 @@
                             <DataGridTextColumn Header="Time" Width="*" Binding="{Binding Time}" ToolTipService.ToolTip="Execute At" CanUserResize="False"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Label Content="Scheduled Tasks" HorizontalAlignment="Center" Margin="11,11,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="Black"/>
-                    <Label Content="Scheduled Tasks" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="{DynamicResource MahApps.Brushes.Accent}"/>
-                    <Button Content="Create New" HorizontalAlignment="Left" Margin="10,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
-                    <Button Content="Edit" HorizontalAlignment="Left" Margin="90,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
-                    <Button Content="Remove" HorizontalAlignment="Left" Margin="170,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
-                    <Button Content="Clear" HorizontalAlignment="Left" Margin="659,188,0,0" VerticalAlignment="Top" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <Label Content="Scheduled Tasks (WIP)" HorizontalAlignment="Center" Margin="11,11,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="Black"/>
+                    <Label Content="Scheduled Tasks (WIP)" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="{DynamicResource MahApps.Brushes.Accent}"/>
+                    <Button Content="Create New" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <Button Content="Edit" HorizontalAlignment="Left" Margin="90,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <Button Content="Remove" HorizontalAlignment="Left" Margin="170,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <Button Content="Clear" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal"/>
                     <!--</StackPanel>-->
                 </Grid>
             </TabItem>
             <TabItem x:Name="DummyTab" Header="" Visibility="Hidden" Width="183" TabIndex="5"/>
-            <TabItem x:Name="AboutTab" Header="About" Margin="0,0,0,5">
+            <TabItem x:Name="AboutTab" Header="About" Margin="0">
                 <Grid>
                     <!--<DockPanel LastChildFill="False" Margin="10" VerticalAlignment="Top">-->
                     <Grid Background="{DynamicResource MahApps.Brushes.Accent2}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="74" Height="74" Margin="10,10,0,0">
