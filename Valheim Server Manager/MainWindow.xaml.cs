@@ -473,10 +473,10 @@ namespace Valheim_Server_Manager
             Scheduling.ScheduledTask task2 = new Scheduling.ScheduledTask { Days = Scheduling.Days.Weekdays, Task = Scheduling.TaskKind.Update, Time = DateTime.Now };
             Scheduling.ScheduledTask task3 = new Scheduling.ScheduledTask { Days = Scheduling.Days.Weekends, Task = Scheduling.TaskKind.Restart, Time = DateTime.Now };
             Scheduling.ScheduledTask task4 = new Scheduling.ScheduledTask { Days = Scheduling.Days.Wednesday, Task = Scheduling.TaskKind.UpdateAndRestart, Time = DateTime.Now };
-            ScheduleGrid.Items.Add(task1);
-            ScheduleGrid.Items.Add(task2);
-            ScheduleGrid.Items.Add(task3);
-            ScheduleGrid.Items.Add(task4);
+            foreach (var task in new Scheduling.ScheduledTask[] { task1, task2, task3, task4 })
+            {
+                ScheduleGrid.Items.Add(task);
+            }
             ScheduleGrid.Items.Refresh();
         }
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

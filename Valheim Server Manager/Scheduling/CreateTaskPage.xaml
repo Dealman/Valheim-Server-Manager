@@ -40,14 +40,19 @@
                         <CheckBox Content="Friday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,33,0,0"/>
                         <CheckBox Content="Saturday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,57,0,10"/>
                         <CheckBox Content="Sunday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="211,10,10,0"/>
+                        <Button Content="All" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,30" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" mah:ControlsHelper.FocusBorderThickness="2" Grid.Column="1"/>
+                        <Button Content="Weekdays" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" Grid.Column="1"/>
+                        <Button Content="Weekends" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="81,0,0,30" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" Grid.Column="1"/>
                         <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0" HorizontalAlignment="Left">
                             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                         </StackPanel>
                         <mah:TimePicker Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" SourceMinutes="{x:Static mah:TimePickerBase.IntervalOf5}" Culture="en-SE" mah:TextBoxHelper.Watermark="Choose Time"/>
+                        <Button Content="Clear" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="81,0,0,10" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" Grid.Column="1"/>
+
                     </Grid>
                 </GroupBox>
             </StackPanel>
-            
+
         </Grid>
     </Border>
 </Page>
