@@ -164,10 +164,10 @@
                     </DataGrid>
                     <Label Content="Scheduled Tasks (WIP)" HorizontalAlignment="Center" Margin="11,11,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="Black"/>
                     <Label Content="Scheduled Tasks (WIP)" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="16.0" Foreground="{DynamicResource MahApps.Brushes.Accent}"/>
-                    <Button Content="Create New" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False"/>
-                    <Button Content="Edit" HorizontalAlignment="Left" Margin="90,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False"/>
-                    <Button Content="Remove" HorizontalAlignment="Left" Margin="170,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False"/>
-                    <Button Content="Clear" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False"/>
+                    <Button x:Name="CreateTaskButton" Content="Create New" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="Button_Click"/>
+                    <Button x:Name="EditTaskButton" Content="Edit" HorizontalAlignment="Left" Margin="90,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="Button_Click"/>
+                    <Button x:Name="RemoveTaskButton" Content="Remove" HorizontalAlignment="Left" Margin="170,0,0,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="Button_Click"/>
+                    <Button x:Name="ClearTasksButton" Content="Clear" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="Button_Click"/>
                     <!--</StackPanel>-->
                 </Grid>
             </TabItem>
@@ -185,11 +185,6 @@
                             <Hyperlink Click="UpdateCheck_Click">Check for Updates</Hyperlink>
                         </TextBlock>
                     </StackPanel>
-                    <Frame Margin="10,89,10,10">
-                        <Frame.Content>
-                            <local:TestPage x:Name="MyPage"/>
-                        </Frame.Content>
-                    </Frame>
                     <!--</DockPanel>-->
                 </Grid>
             </TabItem>

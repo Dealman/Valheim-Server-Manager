@@ -4,12 +4,17 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Valheim_Server_Manager"
-      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="Valheim_Server_Manager.TestPage"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="Valheim_Server_Manager.Scheduling.CreateTaskPage"
       xmlns:fa="http://schemas.fontawesome.io/icons/"
       mc:Ignorable="d"
-      Title="TestPage">
+      Title="CreateTaskPage">
+    <Page.Resources>
+        <ControlTemplate x:Key="SquareButton" TargetType="Button">
+            <Border CornerRadius="0"/>
+        </ControlTemplate>
+    </Page.Resources>
 
-    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="1">
+    <Border>
         <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
             <StackPanel Orientation="Vertical" Margin="0,0,0,10">
                 <Grid>
@@ -22,33 +27,32 @@
                 </Grid>
                 <GroupBox Header="Task" Margin="11,0,10,10" mah:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top">
                     <Grid>
-                        <RadioButton Content="Restart" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                        <RadioButton Content="Update" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top"/>
-                        <RadioButton Content="Restart &amp; Update" HorizontalAlignment="Left" Margin="10,56,0,10" VerticalAlignment="Top"/>
+                        <RadioButton x:Name="RestartRB" Content="Restart" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                        <RadioButton x:Name="UpdateRB" Content="Update" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top"/>
+                        <RadioButton x:Name="BothRB" Content="Restart &amp; Update" HorizontalAlignment="Left" Margin="10,56,0,10" VerticalAlignment="Top"/>
                     </Grid>
                 </GroupBox>
                 <GroupBox Header="Interval" mah:ControlsHelper.ContentCharacterCasing="Normal" VerticalAlignment="Top" Margin="10,0" mah:HeaderedControlHelper.HeaderMargin="0">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <CheckBox Content="Monday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
-                        <CheckBox Content="Tuesday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,33,0,0"/>
-                        <CheckBox Content="Wednesday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,56,0,0"/>
-                        <CheckBox Content="Thursday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,10,0,0"/>
-                        <CheckBox Content="Friday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,33,0,0"/>
-                        <CheckBox Content="Saturday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="117,57,0,10"/>
-                        <CheckBox Content="Sunday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="211,10,10,0"/>
-                        <Button Content="All" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,30" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" mah:ControlsHelper.FocusBorderThickness="2" Grid.Column="1"/>
-                        <Button Content="Weekdays" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" Grid.Column="1"/>
-                        <Button Content="Weekends" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="81,0,0,30" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" Grid.Column="1"/>
+                        <CheckBox x:Name="MondayCB" Content="Monday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Click="Button_Click"/>
+                        <CheckBox x:Name="TuesdayCB" Content="Tuesday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,33,0,0" Click="Button_Click"/>
+                        <CheckBox x:Name="WednesdayCB" Content="Wednesday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,56,0,0" Click="Button_Click"/>
+                        <CheckBox x:Name="ThursdayCB" Content="Thursday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,10,0,0" Click="Button_Click"/>
+                        <CheckBox x:Name="FridayCB" Content="Friday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,33,0,0" Click="Button_Click"/>
+                        <CheckBox x:Name="SaturdayCB" Content="Saturday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,56,0,0" Click="Button_Click"/>
+                        <CheckBox x:Name="SundayCB" Content="Sunday" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="211,10,10,0" Click="Button_Click"/>
                         <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0" HorizontalAlignment="Left">
                             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                         </StackPanel>
-                        <mah:TimePicker Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" SourceMinutes="{x:Static mah:TimePickerBase.IntervalOf5}" Culture="en-SE" mah:TextBoxHelper.Watermark="Choose Time"/>
-                        <Button Content="Clear" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="81,0,0,10" mah:ControlsHelper.ContentCharacterCasing="Normal" Width="63" MinHeight="0" FontSize="8" FontWeight="Bold" Padding="5,1" Grid.Column="1"/>
-
+                        <mah:TimePicker x:Name="TimePickerControl" Margin="10,10,0,0" VerticalAlignment="Top" Grid.Column="1" SourceMinutes="{x:Static mah:TimePickerBase.IntervalOf5}" Culture="en-SE" mah:TextBoxHelper.Watermark="Choose Time" SelectedDateTimeChanged="TimePickerControl_SelectedDateTimeChanged"/>
+                        <Button x:Name="WeekendsButton" Content="Weekends" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="128,50,0,0" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" mah:ControlsHelper.CornerRadius="0" MinWidth="59" Click="Button_Click"/>
+                        <Button x:Name="WeekdaysButton" Content="Weekdays" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="69,50,0,0" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" mah:ControlsHelper.CornerRadius="0" MinWidth="59" MinHeight="25" Click="Button_Click"/>
+                        <Button x:Name="ClearButton" Content="Clear" BorderBrush="{x:Null}" BorderThickness="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="187,50,5,0" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" mah:ControlsHelper.CornerRadius="0" MinWidth="59" MinHeight="25" Height="25" Click="Button_Click"/>
+                        <Button x:Name="AllButton" Content="All" BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="0,0,1,0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,5" mah:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" mah:ControlsHelper.CornerRadius="0" MinWidth="59" Click="Button_Click"/>
                     </Grid>
                 </GroupBox>
             </StackPanel>

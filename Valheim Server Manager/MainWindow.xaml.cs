@@ -759,6 +759,18 @@ namespace Valheim_Server_Manager
                     MessageBox.Show("Error, unable to locate valheim_server.exe!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
+            if (sender == CreateTaskButton)
+            {
+                Scheduling.TaskWindow window = new Scheduling.TaskWindow();
+                window.Owner = this;
+                bool dr = window.ShowDialog().GetValueOrDefault();
+
+                if (dr)
+                {
+
+                }
+            }
         }
 
         private void WorldsDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -907,7 +919,7 @@ namespace Valheim_Server_Manager
                 if (tab == AboutTab)
                 {
                     VersionLabel.Text = $"Version: {ClickOnceManager.CurrentVersion}";
-                    ThemeManager.Current.ChangeTheme(MyPage, ThemeManager.Current.DetectTheme(this));
+                    //ThemeManager.Current.ChangeTheme(MyPage, ThemeManager.Current.DetectTheme(this));
                 }
             }
         }

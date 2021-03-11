@@ -125,6 +125,9 @@
       <DependentUpon>SteamIDListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scheduling\ScheduledTask.cs" />
+    <Compile Include="Scheduling\TaskWindow.xaml.cs">
+      <DependentUpon>TaskWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SteamManager.cs" />
     <Compile Include="Scheduling\CreateTaskPage.xaml.cs">
       <DependentUpon>CreateTaskPage.xaml</DependentUpon>
@@ -141,6 +144,7 @@
     <Compile Include="Controls\SelectableTextBlock.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
     <Compile Include="Controls\FixedBadged.cs" />
+    <Compile Include="Utility\UtilityMethods.cs" />
     <Compile Include="ValheimManager.cs" />
     <Compile Include="ValheimServer.cs" />
     <Page Include="Controls\SteamIDListControl.xaml">
@@ -168,6 +172,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Scheduling\CreateTaskPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Scheduling\TaskWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

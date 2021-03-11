@@ -11,13 +11,14 @@ namespace Valheim_Server_Manager.Scheduling
     [Flags]
     public enum Days
     {
-        Monday = 0,
-        Tuesday = 1,
-        Wednesday = 2,
-        Thursday = 4,
-        Friday = 8,
-        Saturday = 16,
-        Sunday = 32,
+        None = 0,
+        Monday = 1,
+        Tuesday = 2,
+        Wednesday = 4,
+        Thursday = 8,
+        Friday = 16,
+        Saturday = 32,
+        Sunday = 64,
         Weekdays = Monday|Tuesday|Wednesday|Thursday|Friday,
         Weekends = Saturday|Sunday,
         All = Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday
@@ -28,19 +29,6 @@ namespace Valheim_Server_Manager.Scheduling
         Restart,
         Update,
         UpdateAndRestart
-    }
-
-    public class DaysConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return ((Days)value).HasFlag(Days.All);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
     }
 
     public class ScheduledTask
